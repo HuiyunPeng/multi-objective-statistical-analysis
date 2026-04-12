@@ -1,0 +1,5 @@
+.venv
+generated_code/
+logs/
+results/
+.env

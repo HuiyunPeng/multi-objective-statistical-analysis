@@ -1,0 +1,63 @@
+dataset:
+  source_urls:
+    - "https://huggingface.co/datasets/zai-org/humaneval-x/resolve/main/data/{language}/data/humaneval.jsonl"
+    - "https://huggingface.co/datasets/THUDM/humaneval-x/resolve/main/data/{language}/data/humaneval.jsonl"
+  local_files: {}
+  languages:
+    - python
+    - cpp
+    - java
+  selected_problem_ids: []
+  pilot_size: 10
+  cache_dir: "results/cache/datasets"
+
+model:
+  name: "gpt-5.4"
+  reasoning_effort: "medium"
+  temperature: 0
+  max_output_tokens: 16000
+  retries: 3
+  retry_backoff_seconds: 2.0
+  cache_dir: "results/cache/model_outputs"
+  base_url:
+
+benchmark:
+  warmup_runs: 5
+  measured_runs: 20
+  poll_interval_seconds: 0.01
+
+execution:
+  compile_timeout_seconds: 30
+  timeouts:
+    python: 20
+    cpp: 20
+    java: 20
+  python_executable: "python3"
+  cpp_compiler: "g++"
+  cpp_compile_flags:
+    - "-std=c++17"
+    - "-O2"
+  cpp_link_flags: []
+  java_compiler: "javac"
+  java_runtime: "java"
+  java_compile_flags: []
+  java_runtime_flags:
+    - "-ea"
+
+paths:
+  results_dir: "results"
+  analysis_dir: "results/analysis"
+  prompts_dir: "prompts"
+  generated_code_dir: "generated_code"
+  logs_dir: "logs"
+  raw_responses_dir: "results/raw_responses"
+  generation_metadata_dir: "results/generation_metadata"
+  evaluation_dir: "results/evaluations"
+  baseline_code_dir: "generated_code/baseline"
+  optimized_code_dir: "generated_code/optimized"
+  selected_tasks_manifest: "results/selected_tasks.json"
+  run_manifest: "results/run_manifest.json"
+  raw_runs_csv: "results/raw_runs.csv"
+  summary_csv: "results/analysis_ready.csv"
+
+overwrite_existing: false
