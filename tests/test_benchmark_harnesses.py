@@ -81,23 +81,38 @@ class BenchmarkHarnessTests(unittest.TestCase):
             problem_id="2",
             task_id="Java/2",
             language="java",
-            prompt="class Problem {\n    public static int solve(int x) {\n",
-            declaration="public static int solve(int x) {\n",
-            canonical_solution="        return x + 1;\n",
+            prompt=(
+                "import java.util.*;\n\n"
+                "class Solution {\n"
+                "    public int solve(int x) {\n"
+            ),
+            declaration="public int solve(int x) {\n",
+            canonical_solution="        return x + 1;\n    }\n}\n",
             test=(
-                "    }\n"
+                "public class Main {\n"
                 "    public static void main(String[] args) {\n"
-                "        assert solve(1) == 2;\n"
+                "        Solution s = new Solution();\n"
+                "        List<Boolean> correct = Arrays.asList(s.solve(1) == 2);\n"
+                "        if (correct.contains(false)) {\n"
+                "            throw new AssertionError();\n"
+                "        }\n"
                 "    }\n"
                 "}\n"
             ),
             example_test="",
         )
-        wrong_code = "class Problem {\n    public static int solve(int x) {\n        return x;\n"
+        wrong_code = (
+            "import java.util.*;\n\n"
+            "class Solution {\n"
+            "    public int solve(int x) {\n"
+            "        return x;\n"
+            "    }\n"
+            "}\n"
+        )
         result = evaluate_solution(
             task=task,
             code=wrong_code,
-            source_path=Path("Problem.java"),
+            source_path=Path("Solution.java"),
             variant="after",
             objective="memory",
             execution=self.execution,
@@ -105,6 +120,44 @@ class BenchmarkHarnessTests(unittest.TestCase):
         )
         self.assertFalse(result.correctness_pass)
         self.assertTrue(result.test_error)
+
+    @unittest.skipUnless(shutil.which("javac") and shutil.which("java"), "Java is required")
+    def test_java_success_with_split_main_file(self) -> None:
+        task = TaskRecord(
+            problem_id="4",
+            task_id="Java/4",
+            language="java",
+            prompt=(
+                "import java.util.*;\n\n"
+                "class Solution {\n"
+                "    public int solve(int x) {\n"
+            ),
+            declaration="public int solve(int x) {\n",
+            canonical_solution="        return x + 1;\n    }\n}\n",
+            test=(
+                "public class Main {\n"
+                "    public static void main(String[] args) {\n"
+                "        Solution s = new Solution();\n"
+                "        List<Boolean> correct = Arrays.asList(s.solve(1) == 2);\n"
+                "        if (correct.contains(false)) {\n"
+                "            throw new AssertionError();\n"
+                "        }\n"
+                "    }\n"
+                "}\n"
+            ),
+            example_test="",
+        )
+        result = evaluate_solution(
+            task=task,
+            code=task.baseline_source,
+            source_path=Path("Solution.java"),
+            variant="before",
+            objective=None,
+            execution=self.execution,
+            benchmark=self.benchmark,
+        )
+        self.assertTrue(result.correctness_pass)
+        self.assertFalse(result.compile_error)
 
     def test_python_timeout(self) -> None:
         task = TaskRecord(

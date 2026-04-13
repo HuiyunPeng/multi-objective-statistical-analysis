@@ -1,0 +1,18 @@
+{
+  "cache_key": "777a008ca36a7b461bd649569d1080dd1043202b91f78fcc9277ae5b6bcaf0e7",
+  "cleaned_code_path": "generated_code/optimized/memory/java/8.java",
+  "cleaner_notes": [
+    "No markdown code fence found; using raw response text.",
+    "Validating callable signature: public List<Integer> sumProduct(List<Integer> numbers) {"
+  ],
+  "from_cache": false,
+  "language": "java",
+  "model_name": "gpt-5.4",
+  "objective": "memory",
+  "problem_id": "8",
+  "prompt_path": "prompts/memory/java/8.txt",
+  "raw_json_path": "results/raw_responses/memory/java/8.json",
+  "raw_text_path": "results/raw_responses/memory/java/8.txt",
+  "signature_valid": true,
+  "task_id": "Java/8"
+}

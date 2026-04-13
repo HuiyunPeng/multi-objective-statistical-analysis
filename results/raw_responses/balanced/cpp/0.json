@@ -1,0 +1,83 @@
+{
+  "background": false,
+  "billing": {
+    "payer": "developer"
+  },
+  "completed_at": 1776035232.0,
+  "conversation": null,
+  "created_at": 1776035228.0,
+  "error": null,
+  "frequency_penalty": 0.0,
+  "id": "resp_0792d2a20ff0d6340069dc259c60e481948d44393282a75925",
+  "incomplete_details": null,
+  "instructions": null,
+  "max_output_tokens": 16000,
+  "max_tool_calls": null,
+  "metadata": {},
+  "model": "gpt-5.4-2026-03-05",
+  "object": "response",
+  "output": [
+    {
+      "content": null,
+      "encrypted_content": null,
+      "id": "rs_0792d2a20ff0d6340069dc259cbd708194b07f69bf3f76f5a9",
+      "status": null,
+      "summary": [],
+      "type": "reasoning"
+    },
+    {
+      "content": [
+        {
+          "annotations": [],
+          "logprobs": [],
+          "text": "#include <vector>\n#include <algorithm>\nusing namespace std;\n\nbool has_close_elements(vector<float> numbers, float threshold) {\n    if (threshold <= 0.0f || numbers.size() < 2) return false;\n\n    sort(numbers.begin(), numbers.end());\n    for (size_t i = 1, n = numbers.size(); i < n; ++i) {\n        if (numbers[i] - numbers[i - 1] < threshold) return true;\n    }\n    return false;\n}",
+          "type": "output_text"
+        }
+      ],
+      "id": "msg_0792d2a20ff0d6340069dc259efcd88194b74a38d37e25b985",
+      "phase": "final_answer",
+      "role": "assistant",
+      "status": "completed",
+      "type": "message"
+    }
+  ],
+  "parallel_tool_calls": true,
+  "presence_penalty": 0.0,
+  "previous_response_id": null,
+  "prompt": null,
+  "prompt_cache_key": null,
+  "prompt_cache_retention": null,
+  "reasoning": {
+    "effort": "medium",
+    "generate_summary": null,
+    "summary": null
+  },
+  "safety_identifier": null,
+  "service_tier": "default",
+  "status": "completed",
+  "store": true,
+  "temperature": 1.0,
+  "text": {
+    "format": {
+      "type": "text"
+    },
+    "verbosity": "medium"
+  },
+  "tool_choice": "auto",
+  "tools": [],
+  "top_logprobs": 0,
+  "top_p": 0.98,
+  "truncation": "disabled",
+  "usage": {
+    "input_tokens": 231,
+    "input_tokens_details": {
+      "cached_tokens": 0
+    },
+    "output_tokens": 263,
+    "output_tokens_details": {
+      "reasoning_tokens": 154
+    },
+    "total_tokens": 494
+  },
+  "user": null
+}

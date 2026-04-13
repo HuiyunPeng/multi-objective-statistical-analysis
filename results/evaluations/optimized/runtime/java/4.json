@@ -1,0 +1,186 @@
+{
+  "compile_error": false,
+  "compile_returncode": 0,
+  "compile_stderr": "",
+  "compile_stdout": "",
+  "correctness_pass": true,
+  "correctness_returncode": 0,
+  "correctness_stderr": "",
+  "correctness_stdout": "",
+  "language": "java",
+  "memory_cv": 0.056087249189250774,
+  "memory_mean": 34376908.8,
+  "memory_std": 1928106.2502217477,
+  "objective": "runtime",
+  "problem_id": "4",
+  "runtime_cv": 0.2034394202360028,
+  "runtime_mean": 0.04304433135548606,
+  "runtime_std": 0.008756913815406482,
+  "samples": [
+    {
+      "peak_memory_bytes": 36077568,
+      "repetition_index": 1,
+      "returncode": 0,
+      "runtime_seconds": 0.05343504098709673,
+      "stderr": "",
+      "stdout": ""
+    },
+    {
+      "peak_memory_bytes": 35799040,
+      "repetition_index": 2,
+      "returncode": 0,
+      "runtime_seconds": 0.04239420802332461,
+      "stderr": "",
+      "stdout": ""
+    },
+    {
+      "peak_memory_bytes": 30916608,
+      "repetition_index": 3,
+      "returncode": 0,
+      "runtime_seconds": 0.03990741609595716,
+      "stderr": "",
+      "stdout": ""
+    },
+    {
+      "peak_memory_bytes": 35962880,
+      "repetition_index": 4,
+      "returncode": 0,
+      "runtime_seconds": 0.04043200006708503,
+      "stderr": "",
+      "stdout": ""
+    },
+    {
+      "peak_memory_bytes": 35799040,
+      "repetition_index": 5,
+      "returncode": 0,
+      "runtime_seconds": 0.040202833944931626,
+      "stderr": "",
+      "stdout": ""
+    },
+    {
+      "peak_memory_bytes": 35405824,
+      "repetition_index": 6,
+      "returncode": 0,
+      "runtime_seconds": 0.04031108401250094,
+      "stderr": "",
+      "stdout": ""
+    },
+    {
+      "peak_memory_bytes": 35831808,
+      "repetition_index": 7,
+      "returncode": 0,
+      "runtime_seconds": 0.040284749935381114,
+      "stderr": "",
+      "stdout": ""
+    },
+    {
+      "peak_memory_bytes": 35717120,
+      "repetition_index": 8,
+      "returncode": 0,
+      "runtime_seconds": 0.040603292058221996,
+      "stderr": "",
+      "stdout": ""
+    },
+    {
+      "peak_memory_bytes": 36110336,
+      "repetition_index": 9,
+      "returncode": 0,
+      "runtime_seconds": 0.0408315840177238,
+      "stderr": "",
+      "stdout": ""
+    },
+    {
+      "peak_memory_bytes": 33128448,
+      "repetition_index": 10,
+      "returncode": 0,
+      "runtime_seconds": 0.03905791696161032,
+      "stderr": "",
+      "stdout": ""
+    },
+    {
+      "peak_memory_bytes": 35389440,
+      "repetition_index": 11,
+      "returncode": 0,
+      "runtime_seconds": 0.04082600004039705,
+      "stderr": "",
+      "stdout": ""
+    },
+    {
+      "peak_memory_bytes": 35258368,
+      "repetition_index": 12,
+      "returncode": 0,
+      "runtime_seconds": 0.04064345802180469,
+      "stderr": "",
+      "stdout": ""
+    },
+    {
+      "peak_memory_bytes": 35274752,
+      "repetition_index": 13,
+      "returncode": 0,
+      "runtime_seconds": 0.04109491698909551,
+      "stderr": "",
+      "stdout": ""
+    },
+    {
+      "peak_memory_bytes": 32522240,
+      "repetition_index": 14,
+      "returncode": 0,
+      "runtime_seconds": 0.03949279198423028,
+      "stderr": "",
+      "stdout": ""
+    },
+    {
+      "peak_memory_bytes": 35127296,
+      "repetition_index": 15,
+      "returncode": 0,
+      "runtime_seconds": 0.040557708009146154,
+      "stderr": "",
+      "stdout": ""
+    },
+    {
+      "peak_memory_bytes": 33292288,
+      "repetition_index": 16,
+      "returncode": 0,
+      "runtime_seconds": 0.04070670797955245,
+      "stderr": "",
+      "stdout": ""
+    },
+    {
+      "peak_memory_bytes": 32423936,
+      "repetition_index": 17,
+      "returncode": 0,
+      "runtime_seconds": 0.04081649996805936,
+      "stderr": "",
+      "stdout": ""
+    },
+    {
+      "peak_memory_bytes": 31621120,
+      "repetition_index": 18,
+      "returncode": 0,
+      "runtime_seconds": 0.0406099590472877,
+      "stderr": "",
+      "stdout": ""
+    },
+    {
+      "peak_memory_bytes": 30081024,
+      "repetition_index": 19,
+      "returncode": 0,
+      "runtime_seconds": 0.07806545903440565,
+      "stderr": "",
+      "stdout": ""
+    },
+    {
+      "peak_memory_bytes": 35799040,
+      "repetition_index": 20,
+      "returncode": 0,
+      "runtime_seconds": 0.040612999931909144,
+      "stderr": "",
+      "stdout": ""
+    }
+  ],
+  "source_path": "/Users/peng397/Desktop/multi-objective-statistical-analysis/generated_code/optimized/runtime/java/4.java",
+  "task_id": "Java/4",
+  "test_error": false,
+  "timeout": false,
+  "variant": "after"
+}

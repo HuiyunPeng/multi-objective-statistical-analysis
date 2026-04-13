@@ -1,0 +1,83 @@
+{
+  "background": false,
+  "billing": {
+    "payer": "developer"
+  },
+  "completed_at": 1776035161.0,
+  "conversation": null,
+  "created_at": 1776035154.0,
+  "error": null,
+  "frequency_penalty": 0.0,
+  "id": "resp_0128c07f602c01780069dc25522988819095797d84aea115b8",
+  "incomplete_details": null,
+  "instructions": null,
+  "max_output_tokens": 16000,
+  "max_tool_calls": null,
+  "metadata": {},
+  "model": "gpt-5.4-2026-03-05",
+  "object": "response",
+  "output": [
+    {
+      "content": null,
+      "encrypted_content": null,
+      "id": "rs_0128c07f602c01780069dc2553953c81909e0f0dd25103bb7b",
+      "status": null,
+      "summary": [],
+      "type": "reasoning"
+    },
+    {
+      "content": [
+        {
+          "annotations": [],
+          "logprobs": [],
+          "text": "from typing import List\n\n\ndef intersperse(numbers: List[int], delimeter: int) -> List[int]:\n    n = len(numbers)\n    if n < 2:\n        return numbers[:]\n\n    result = [0] * (n * 2 - 1)\n    j = 0\n    last = n - 1\n\n    for i in range(last):\n        result[j] = numbers[i]\n        result[j + 1] = delimeter\n        j += 2\n\n    result[j] = numbers[last]\n    return result",
+          "type": "output_text"
+        }
+      ],
+      "id": "msg_0128c07f602c01780069dc25584a4c819098a8f870b45d298b",
+      "phase": "final_answer",
+      "role": "assistant",
+      "status": "completed",
+      "type": "message"
+    }
+  ],
+  "parallel_tool_calls": true,
+  "presence_penalty": 0.0,
+  "previous_response_id": null,
+  "prompt": null,
+  "prompt_cache_key": null,
+  "prompt_cache_retention": null,
+  "reasoning": {
+    "effort": "medium",
+    "generate_summary": null,
+    "summary": null
+  },
+  "safety_identifier": null,
+  "service_tier": "default",
+  "status": "completed",
+  "store": true,
+  "temperature": 1.0,
+  "text": {
+    "format": {
+      "type": "text"
+    },
+    "verbosity": "medium"
+  },
+  "tool_choice": "auto",
+  "tools": [],
+  "top_logprobs": 0,
+  "top_p": 0.98,
+  "truncation": "disabled",
+  "usage": {
+    "input_tokens": 192,
+    "input_tokens_details": {
+      "cached_tokens": 0
+    },
+    "output_tokens": 473,
+    "output_tokens_details": {
+      "reasoning_tokens": 352
+    },
+    "total_tokens": 665
+  },
+  "user": null
+}

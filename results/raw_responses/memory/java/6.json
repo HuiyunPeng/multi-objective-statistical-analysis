@@ -1,0 +1,83 @@
+{
+  "background": false,
+  "billing": {
+    "payer": "developer"
+  },
+  "completed_at": 1776035526.0,
+  "conversation": null,
+  "created_at": 1776035520.0,
+  "error": null,
+  "frequency_penalty": 0.0,
+  "id": "resp_0e1a85a6069c10f70069dc26c0852c819396490efcab143f45",
+  "incomplete_details": null,
+  "instructions": null,
+  "max_output_tokens": 16000,
+  "max_tool_calls": null,
+  "metadata": {},
+  "model": "gpt-5.4-2026-03-05",
+  "object": "response",
+  "output": [
+    {
+      "content": null,
+      "encrypted_content": null,
+      "id": "rs_0e1a85a6069c10f70069dc26c0cc088193838c1caba7356741",
+      "status": null,
+      "summary": [],
+      "type": "reasoning"
+    },
+    {
+      "content": [
+        {
+          "annotations": [],
+          "logprobs": [],
+          "text": "import java.util.*;\n\nclass Solution {\n    public List<Integer> parseNestedParens(String paren_string) {\n        List<Integer> result = new ArrayList<>();\n        int depth = 0;\n        int maxDepth = 0;\n        boolean inGroup = false;\n\n        for (int i = 0, n = paren_string.length(); i < n; i++) {\n            char c = paren_string.charAt(i);\n            if (c == ' ') {\n                if (inGroup) {\n                    result.add(maxDepth);\n                    depth = 0;\n                    maxDepth = 0;\n                    inGroup = false;\n                }\n            } else {\n                inGroup = true;\n                if (c == '(') {\n                    depth++;\n                    if (depth > maxDepth) {\n                        maxDepth = depth;\n                    }\n                } else {\n                    depth--;\n                }\n            }\n        }\n\n        if (inGroup) {\n            result.add(maxDepth);\n        }\n\n        return result;\n    }\n}",
+          "type": "output_text"
+        }
+      ],
+      "id": "msg_0e1a85a6069c10f70069dc26c59940819386bd95617bd4691c",
+      "phase": "final_answer",
+      "role": "assistant",
+      "status": "completed",
+      "type": "message"
+    }
+  ],
+  "parallel_tool_calls": true,
+  "presence_penalty": 0.0,
+  "previous_response_id": null,
+  "prompt": null,
+  "prompt_cache_key": null,
+  "prompt_cache_retention": null,
+  "reasoning": {
+    "effort": "medium",
+    "generate_summary": null,
+    "summary": null
+  },
+  "safety_identifier": null,
+  "service_tier": "default",
+  "status": "completed",
+  "store": true,
+  "temperature": 1.0,
+  "text": {
+    "format": {
+      "type": "text"
+    },
+    "verbosity": "medium"
+  },
+  "tool_choice": "auto",
+  "tools": [],
+  "top_logprobs": 0,
+  "top_p": 0.98,
+  "truncation": "disabled",
+  "usage": {
+    "input_tokens": 287,
+    "input_tokens_details": {
+      "cached_tokens": 0
+    },
+    "output_tokens": 395,
+    "output_tokens_details": {
+      "reasoning_tokens": 186
+    },
+    "total_tokens": 682
+  },
+  "user": null
+}

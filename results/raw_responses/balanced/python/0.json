@@ -1,0 +1,83 @@
+{
+  "background": false,
+  "billing": {
+    "payer": "developer"
+  },
+  "completed_at": 1776035079.0,
+  "conversation": null,
+  "created_at": 1776035075.0,
+  "error": null,
+  "frequency_penalty": 0.0,
+  "id": "resp_0bab6d4514afcd030069dc2503f4d881949a633cc37134a8aa",
+  "incomplete_details": null,
+  "instructions": null,
+  "max_output_tokens": 16000,
+  "max_tool_calls": null,
+  "metadata": {},
+  "model": "gpt-5.4-2026-03-05",
+  "object": "response",
+  "output": [
+    {
+      "content": null,
+      "encrypted_content": null,
+      "id": "rs_0bab6d4514afcd030069dc250452788194a9fd9ac77dc286af",
+      "status": null,
+      "summary": [],
+      "type": "reasoning"
+    },
+    {
+      "content": [
+        {
+          "annotations": [],
+          "logprobs": [],
+          "text": "from typing import List\n\n\ndef has_close_elements(numbers: List[float], threshold: float) -> bool:\n    if threshold <= 0 or len(numbers) < 2:\n        return False\n    nums = sorted(numbers)\n    prev = nums[0]\n    for curr in nums[1:]:\n        if curr - prev < threshold:\n            return True\n        prev = curr\n    return False",
+          "type": "output_text"
+        }
+      ],
+      "id": "msg_0bab6d4514afcd030069dc25067c048194ab4e219f851784bd",
+      "phase": "final_answer",
+      "role": "assistant",
+      "status": "completed",
+      "type": "message"
+    }
+  ],
+  "parallel_tool_calls": true,
+  "presence_penalty": 0.0,
+  "previous_response_id": null,
+  "prompt": null,
+  "prompt_cache_key": null,
+  "prompt_cache_retention": null,
+  "reasoning": {
+    "effort": "medium",
+    "generate_summary": null,
+    "summary": null
+  },
+  "safety_identifier": null,
+  "service_tier": "default",
+  "status": "completed",
+  "store": true,
+  "temperature": 1.0,
+  "text": {
+    "format": {
+      "type": "text"
+    },
+    "verbosity": "medium"
+  },
+  "tool_choice": "auto",
+  "tools": [],
+  "top_logprobs": 0,
+  "top_p": 0.98,
+  "truncation": "disabled",
+  "usage": {
+    "input_tokens": 227,
+    "input_tokens_details": {
+      "cached_tokens": 0
+    },
+    "output_tokens": 224,
+    "output_tokens_details": {
+      "reasoning_tokens": 136
+    },
+    "total_tokens": 451
+  },
+  "user": null
+}

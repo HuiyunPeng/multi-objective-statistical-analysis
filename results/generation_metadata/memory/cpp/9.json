@@ -1,0 +1,18 @@
+{
+  "cache_key": "29294faa48790a241630cb10833f112beee506d64fb77f9e5aa5595953a0557a",
+  "cleaned_code_path": "generated_code/optimized/memory/cpp/9.cpp",
+  "cleaner_notes": [
+    "No markdown code fence found; using raw response text.",
+    "Validating callable signature: vector<int> rolling_max(vector<int> numbers){"
+  ],
+  "from_cache": false,
+  "language": "cpp",
+  "model_name": "gpt-5.4",
+  "objective": "memory",
+  "problem_id": "9",
+  "prompt_path": "prompts/memory/cpp/9.txt",
+  "raw_json_path": "results/raw_responses/memory/cpp/9.json",
+  "raw_text_path": "results/raw_responses/memory/cpp/9.txt",
+  "signature_valid": true,
+  "task_id": "CPP/9"
+}

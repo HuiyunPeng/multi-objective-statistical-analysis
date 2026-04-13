@@ -1,0 +1,26 @@
+#include <vector>
+#include <string>
+using namespace std;
+
+vector<string> separate_paren_groups(string paren_string) {
+    vector<string> all_parens;
+    string current_paren;
+    current_paren.reserve(paren_string.size());
+
+    int level = 0;
+    for (char c : paren_string) {
+        if (c == '(') {
+            ++level;
+            current_paren += c;
+        } else if (c == ')') {
+            --level;
+            current_paren += c;
+            if (level == 0) {
+                all_parens.push_back(current_paren);
+                current_paren.clear();
+            }
+        }
+    }
+
+    return all_parens;
+}

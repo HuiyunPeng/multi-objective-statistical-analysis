@@ -1,0 +1,18 @@
+{
+  "cache_key": "e626f6bb82d2808ac72e6a1de8d37f9f530a6d10490c0a364a52164289f52a0c",
+  "cleaned_code_path": "generated_code/optimized/runtime/python/3.py",
+  "cleaner_notes": [
+    "No markdown code fence found; using raw response text.",
+    "Validating callable signature: def below_zero(operations: List[int]) -> bool:"
+  ],
+  "from_cache": false,
+  "language": "python",
+  "model_name": "gpt-5.4",
+  "objective": "runtime",
+  "problem_id": "3",
+  "prompt_path": "prompts/runtime/python/3.txt",
+  "raw_json_path": "results/raw_responses/runtime/python/3.json",
+  "raw_text_path": "results/raw_responses/runtime/python/3.txt",
+  "signature_valid": true,
+  "task_id": "Python/3"
+}

@@ -17,7 +17,8 @@ class OpenAIModelClient:
         self._client: Any | None = None
 
     def generate(self, prompt: str) -> ModelCallResult:
-        cache_key = self._build_cache_key(prompt)
+        request_payload = self._build_request_payload(prompt)
+        cache_key = self._build_cache_key(request_payload)
         cache_path = self._cache_path(cache_key)
         if cache_path.exists():
             cached = read_json(cache_path)
@@ -32,13 +33,7 @@ class OpenAIModelClient:
         raw_text = ""
         for attempt in range(1, self.config.model.retries + 1):
             try:
-                response = self._client_instance().responses.create(
-                    model=self.config.model.name,
-                    input=prompt,
-                    reasoning={"effort": self.config.model.reasoning_effort},
-                    temperature=self.config.model.temperature,
-                    max_output_tokens=self.config.model.max_output_tokens,
-                )
+                response = self._client_instance().responses.create(**request_payload)
                 response_json = self._response_to_json(response)
                 raw_text = self._extract_output_text(response, response_json)
                 break
@@ -53,10 +48,7 @@ class OpenAIModelClient:
             cache_path,
             {
                 "cache_key": cache_key,
-                "model": self.config.model.name,
-                "reasoning_effort": self.config.model.reasoning_effort,
-                "temperature": self.config.model.temperature,
-                "max_output_tokens": self.config.model.max_output_tokens,
+                "request_payload": request_payload,
                 "raw_text": raw_text,
                 "response_json": response_json,
             },
@@ -68,18 +60,25 @@ class OpenAIModelClient:
             from_cache=False,
         )
 
-    def _build_cache_key(self, prompt: str) -> str:
-        serialized = json.dumps(
-            {
-                "model": self.config.model.name,
-                "reasoning_effort": self.config.model.reasoning_effort,
-                "temperature": self.config.model.temperature,
-                "max_output_tokens": self.config.model.max_output_tokens,
-                "prompt": prompt,
-            },
-            sort_keys=True,
-        )
+    def _build_cache_key(self, request_payload: dict[str, Any]) -> str:
+        serialized = json.dumps(request_payload, sort_keys=True)
         return sha256_text(serialized)
+
+    def _build_request_payload(self, prompt: str) -> dict[str, Any]:
+        payload: dict[str, Any] = {
+            "model": self.config.model.name,
+            "input": prompt,
+            "reasoning": {"effort": self.config.model.reasoning_effort},
+            "max_output_tokens": self.config.model.max_output_tokens,
+        }
+        if self._supports_temperature(self.config.model.name) and self.config.model.temperature is not None:
+            payload["temperature"] = self.config.model.temperature
+        return payload
+
+    @staticmethod
+    def _supports_temperature(model_name: str) -> bool:
+        normalized = model_name.strip().lower()
+        return not normalized.startswith("gpt-5")
 
     def _cache_path(self, cache_key: str) -> Path:
         return self.config.resolve_path(self.config.model.cache_dir) / f"{cache_key}.json"

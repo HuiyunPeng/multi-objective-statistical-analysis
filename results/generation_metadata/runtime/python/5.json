@@ -1,0 +1,18 @@
+{
+  "cache_key": "191814011a4dfe4905fa9c49a12950ce6e1617106c7b3b3591cf313bae2089db",
+  "cleaned_code_path": "generated_code/optimized/runtime/python/5.py",
+  "cleaner_notes": [
+    "No markdown code fence found; using raw response text.",
+    "Validating callable signature: def intersperse(numbers: List[int], delimeter: int) -> List[int]:"
+  ],
+  "from_cache": false,
+  "language": "python",
+  "model_name": "gpt-5.4",
+  "objective": "runtime",
+  "problem_id": "5",
+  "prompt_path": "prompts/runtime/python/5.txt",
+  "raw_json_path": "results/raw_responses/runtime/python/5.json",
+  "raw_text_path": "results/raw_responses/runtime/python/5.txt",
+  "signature_valid": true,
+  "task_id": "Python/5"
+}

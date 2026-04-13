@@ -1,0 +1,18 @@
+{
+  "cache_key": "3b2e01752fb61a320bd7fd533cdbc165dcc51ea793e110a54a434e7e2073a264",
+  "cleaned_code_path": "generated_code/optimized/runtime/java/9.java",
+  "cleaner_notes": [
+    "No markdown code fence found; using raw response text.",
+    "Validating callable signature: public List<Integer> rollingMax(List<Integer> numbers) {"
+  ],
+  "from_cache": false,
+  "language": "java",
+  "model_name": "gpt-5.4",
+  "objective": "runtime",
+  "problem_id": "9",
+  "prompt_path": "prompts/runtime/java/9.txt",
+  "raw_json_path": "results/raw_responses/runtime/java/9.json",
+  "raw_text_path": "results/raw_responses/runtime/java/9.txt",
+  "signature_valid": true,
+  "task_id": "Java/9"
+}

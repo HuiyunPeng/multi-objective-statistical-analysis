@@ -14,7 +14,7 @@ dataset:
 model:
   name: "gpt-5.4"
   reasoning_effort: "medium"
-  temperature: 0
+  temperature:
   max_output_tokens: 16000
   retries: 3
   retry_backoff_seconds: 2.0
@@ -60,4 +60,4 @@ paths:
   raw_runs_csv: "results/raw_runs.csv"
   summary_csv: "results/analysis_ready.csv"
 
-overwrite_existing: false
+overwrite_existing: true

@@ -1,0 +1,95 @@
+{
+  "cache_key": "404f741c78f34bc9c0692e6a29eb0e366f7a301eb1d8481e53f727565b216bc6",
+  "raw_text": "#include <vector>\n#include <string>\n#include <utility>\n\nusing namespace std;\n\nvector<string> filter_by_substring(vector<string> strings, string substring) {\n    if (substring.empty()) return strings;\n\n    vector<string> out;\n    for (string& s : strings) {\n        if (s.find(substring) != string::npos) {\n            out.emplace_back(std::move(s));\n        }\n    }\n    return out;\n}",
+  "request_payload": {
+    "input": "You are given a programming task in C++. Optimize the provided code for memory usage while preserving correctness. Do not change the function signature. Do not add explanations. Output only the final optimized code.\n\nProvided code:\n/*\nFilter an input vector of strings only for ones that contain given substring\n>>> filter_by_substring({}, \"a\")\n{}\n>>> filter_by_substring({\"abc\", \"bacd\", \"cde\", \"vector\"}, \"a\")\n{\"abc\", \"bacd\", \"vector\"}\n*/\n#include<stdio.h>\n#include<vector>\n#include<string>\nusing namespace std;\nvector<string> filter_by_substring(vector<string> strings, string substring){\n    vector<string> out;\n    for (int i=0;i<strings.size();i++)\n    {\n        if (strings[i].find(substring)!=strings[i].npos)\n        out.push_back(strings[i]);\n    }\n    return out;\n}\n",
+    "max_output_tokens": 16000,
+    "model": "gpt-5.4",
+    "reasoning": {
+      "effort": "medium"
+    }
+  },
+  "response_json": {
+    "background": false,
+    "billing": {
+      "payer": "developer"
+    },
+    "completed_at": 1776035349.0,
+    "conversation": null,
+    "created_at": 1776035343.0,
+    "error": null,
+    "frequency_penalty": 0.0,
+    "id": "resp_0e93225aaab2b9c70069dc260f9814819495b2ce891713928f",
+    "incomplete_details": null,
+    "instructions": null,
+    "max_output_tokens": 16000,
+    "max_tool_calls": null,
+    "metadata": {},
+    "model": "gpt-5.4-2026-03-05",
+    "object": "response",
+    "output": [
+      {
+        "content": null,
+        "encrypted_content": null,
+        "id": "rs_0e93225aaab2b9c70069dc260fe7e88194840217f7af16fe21",
+        "status": null,
+        "summary": [],
+        "type": "reasoning"
+      },
+      {
+        "content": [
+          {
+            "annotations": [],
+            "logprobs": [],
+            "text": "#include <vector>\n#include <string>\n#include <utility>\n\nusing namespace std;\n\nvector<string> filter_by_substring(vector<string> strings, string substring) {\n    if (substring.empty()) return strings;\n\n    vector<string> out;\n    for (string& s : strings) {\n        if (s.find(substring) != string::npos) {\n            out.emplace_back(std::move(s));\n        }\n    }\n    return out;\n}",
+            "type": "output_text"
+          }
+        ],
+        "id": "msg_0e93225aaab2b9c70069dc2614e52881948e8ad8bf3d8e1ae4",
+        "phase": "final_answer",
+        "role": "assistant",
+        "status": "completed",
+        "type": "message"
+      }
+    ],
+    "parallel_tool_calls": true,
+    "presence_penalty": 0.0,
+    "previous_response_id": null,
+    "prompt": null,
+    "prompt_cache_key": null,
+    "prompt_cache_retention": null,
+    "reasoning": {
+      "effort": "medium",
+      "generate_summary": null,
+      "summary": null
+    },
+    "safety_identifier": null,
+    "service_tier": "default",
+    "status": "completed",
+    "store": true,
+    "temperature": 1.0,
+    "text": {
+      "format": {
+        "type": "text"
+      },
+      "verbosity": "medium"
+    },
+    "tool_choice": "auto",
+    "tools": [],
+    "top_logprobs": 0,
+    "top_p": 0.98,
+    "truncation": "disabled",
+    "usage": {
+      "input_tokens": 186,
+      "input_tokens_details": {
+        "cached_tokens": 0
+      },
+      "output_tokens": 365,
+      "output_tokens_details": {
+        "reasoning_tokens": 270
+      },
+      "total_tokens": 551
+    },
+    "user": null
+  }
+}

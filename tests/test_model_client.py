@@ -34,8 +34,8 @@ class ModelClientTests(unittest.TestCase):
             )
             config.ensure_directories()
             client = OpenAIModelClient(config)
-            prompt = "optimize this code"
-            self.assertEqual(client._build_cache_key(prompt), client._build_cache_key(prompt))
+            payload = client._build_request_payload("optimize this code")
+            self.assertEqual(client._build_cache_key(payload), client._build_cache_key(payload))
 
     def test_load_api_key_from_dotenv(self) -> None:
         with tempfile.TemporaryDirectory() as tmpdir:
@@ -52,6 +52,36 @@ class ModelClientTests(unittest.TestCase):
             config.ensure_directories()
             client = OpenAIModelClient(config)
             self.assertEqual(client._load_api_key(), "test-from-dotenv")
+
+    def test_gpt5_request_omits_temperature(self) -> None:
+        with tempfile.TemporaryDirectory() as tmpdir:
+            config = ExperimentConfig(
+                dataset=DatasetConfig(source_urls=["https://example.com/{language}.jsonl"]),
+                model=ModelConfig(name="gpt-5.4", temperature=0, cache_dir="cache/model"),
+                benchmark=BenchmarkConfig(),
+                execution=ExecutionConfig(),
+                paths=PathsConfig(),
+                project_root=Path(tmpdir),
+            )
+            config.ensure_directories()
+            client = OpenAIModelClient(config)
+            payload = client._build_request_payload("optimize this code")
+            self.assertNotIn("temperature", payload)
+
+    def test_non_gpt5_request_keeps_temperature(self) -> None:
+        with tempfile.TemporaryDirectory() as tmpdir:
+            config = ExperimentConfig(
+                dataset=DatasetConfig(source_urls=["https://example.com/{language}.jsonl"]),
+                model=ModelConfig(name="gpt-4.1", temperature=0, cache_dir="cache/model"),
+                benchmark=BenchmarkConfig(),
+                execution=ExecutionConfig(),
+                paths=PathsConfig(),
+                project_root=Path(tmpdir),
+            )
+            config.ensure_directories()
+            client = OpenAIModelClient(config)
+            payload = client._build_request_payload("optimize this code")
+            self.assertEqual(payload["temperature"], 0)
 
 
 if __name__ == "__main__":

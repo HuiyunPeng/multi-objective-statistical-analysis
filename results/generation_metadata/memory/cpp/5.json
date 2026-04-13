@@ -1,0 +1,18 @@
+{
+  "cache_key": "136d62ef87c78b6804e80813aef6cfb5fa067498ec34f3367dbcfe3cc42e0b30",
+  "cleaned_code_path": "generated_code/optimized/memory/cpp/5.cpp",
+  "cleaner_notes": [
+    "No markdown code fence found; using raw response text.",
+    "Validating callable signature: vector<int> intersperse(vector<int> numbers, int delimeter){"
+  ],
+  "from_cache": false,
+  "language": "cpp",
+  "model_name": "gpt-5.4",
+  "objective": "memory",
+  "problem_id": "5",
+  "prompt_path": "prompts/memory/cpp/5.txt",
+  "raw_json_path": "results/raw_responses/memory/cpp/5.json",
+  "raw_text_path": "results/raw_responses/memory/cpp/5.txt",
+  "signature_valid": true,
+  "task_id": "CPP/5"
+}

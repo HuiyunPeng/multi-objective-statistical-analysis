@@ -1,0 +1,18 @@
+{
+  "cache_key": "552b678cec6012e3ab0aa00a74565dc9e985050e2e0690c34cfecff026656f04",
+  "cleaned_code_path": "generated_code/optimized/balanced/python/1.py",
+  "cleaner_notes": [
+    "No markdown code fence found; using raw response text.",
+    "Validating callable signature: def separate_paren_groups(paren_string: str) -> List[str]:"
+  ],
+  "from_cache": false,
+  "language": "python",
+  "model_name": "gpt-5.4",
+  "objective": "balanced",
+  "problem_id": "1",
+  "prompt_path": "prompts/balanced/python/1.txt",
+  "raw_json_path": "results/raw_responses/balanced/python/1.json",
+  "raw_text_path": "results/raw_responses/balanced/python/1.txt",
+  "signature_valid": true,
+  "task_id": "Python/1"
+}

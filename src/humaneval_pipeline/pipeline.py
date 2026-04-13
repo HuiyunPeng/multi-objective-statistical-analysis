@@ -127,7 +127,11 @@ def _evaluate(config: ExperimentConfig, aligned_tasks: dict[str, dict[str, TaskR
         for task in task_map.values():
             baseline_source_file = baseline_code_path(config, task.problem_id, language)
             baseline_eval_path = evaluation_path(config, "baseline", task.problem_id, language)
-            if config.overwrite_existing or not baseline_eval_path.exists():
+            if (
+                config.overwrite_existing
+                or not baseline_eval_path.exists()
+                or _should_rerun_legacy_java_compile_case(baseline_eval_path, language)
+            ):
                 baseline_result = evaluate_solution(
                     task=task,
                     code=baseline_source_file.read_text(encoding="utf-8"),
@@ -146,7 +150,12 @@ def _evaluate(config: ExperimentConfig, aligned_tasks: dict[str, dict[str, TaskR
                 optimized_eval_path = evaluation_path(
                     config, "optimized", task.problem_id, language, objective
                 )
-                if not config.overwrite_existing and optimized_eval_path.exists():
+                if (
+                    not config.overwrite_existing
+                    and optimized_eval_path.exists()
+                    and not _should_rerun_signature_skipped_case(optimized_eval_path, metadata)
+                    and not _should_rerun_legacy_java_compile_case(optimized_eval_path, language)
+                ):
                     continue
 
                 if not metadata.get("signature_valid"):
@@ -183,6 +192,26 @@ def _evaluate(config: ExperimentConfig, aligned_tasks: dict[str, dict[str, TaskR
                 )
                 write_json(optimized_eval_path, optimized_result.to_dict())
                 logger.info("Evaluated optimized | %s | %s | %s", task.problem_id, language, objective)
+
+
+def _should_rerun_signature_skipped_case(optimized_eval_path: Path, metadata: dict[str, object]) -> bool:
+    if not optimized_eval_path.exists():
+        return False
+
+    prior_result = read_json(optimized_eval_path)
+    prior_signature_skip = (
+        prior_result.get("correctness_stderr") == "Signature validation failed before execution."
+    )
+    current_signature_valid = bool(metadata.get("signature_valid"))
+    return prior_signature_skip and current_signature_valid
+
+
+def _should_rerun_legacy_java_compile_case(result_path: Path, language: str) -> bool:
+    if language != "java" or not result_path.exists():
+        return False
+    prior_result = read_json(result_path)
+    compile_stderr = str(prior_result.get("compile_stderr", ""))
+    return "class Main is public, should be declared in a file named Main.java" in compile_stderr
 
 
 def _load_selected_manifest(config: ExperimentConfig) -> dict[str, dict[str, TaskRecord]]:

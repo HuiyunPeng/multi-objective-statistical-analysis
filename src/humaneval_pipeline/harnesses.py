@@ -93,20 +93,28 @@ class JavaHarness(BaseHarness):
     language = "java"
 
     CLASS_PATTERN = re.compile(r"\b(?:public\s+)?class\s+([A-Za-z_][A-Za-z0-9_]*)")
+    IMPORT_PATTERN = re.compile(r"^\s*import\s+[^;]+;\s*$", re.MULTILINE)
 
     def prepare(self, task: TaskRecord, code: str, execution: ExecutionConfig) -> PreparedProgram:
         workdir = self._tempdir(self.language)
-        combined_source = self._combined_source(code, task.test)
-        class_name = self._class_name(combined_source)
+        class_name = self._class_name(code)
         source_file = workdir / f"{class_name}.java"
-        source_file.write_text(combined_source, encoding="utf-8")
+        source_file.write_text(code.rstrip() + "\n", encoding="utf-8")
 
-        command = [execution.java_compiler, *execution.java_compile_flags, source_file.name]
+        main_file = workdir / "Main.java"
+        main_file.write_text(self._main_source(task), encoding="utf-8")
+
+        command = [
+            execution.java_compiler,
+            *execution.java_compile_flags,
+            source_file.name,
+            main_file.name,
+        ]
         compile_result = _run_compile(command, workdir, execution.compile_timeout_seconds)
         return PreparedProgram(
             language=self.language,
             workdir=workdir,
-            run_command=[execution.java_runtime, *execution.java_runtime_flags, class_name],
+            run_command=[execution.java_runtime, *execution.java_runtime_flags, "Main"],
             source_file=source_file,
             compile_result=compile_result,
         )
@@ -117,6 +125,17 @@ class JavaHarness(BaseHarness):
         if match:
             return match.group(1)
         return "Problem"
+
+    @classmethod
+    def _import_prelude(cls, source: str) -> str:
+        imports = cls.IMPORT_PATTERN.findall(source)
+        if not imports:
+            return ""
+        return "\n".join(line.strip() for line in imports) + "\n\n"
+
+    @classmethod
+    def _main_source(cls, task: TaskRecord) -> str:
+        return f"{cls._import_prelude(task.prompt)}{task.test.rstrip()}\n"
 
 
 def _run_compile(command: list[str], cwd: Path, timeout_seconds: int) -> CompileResult:

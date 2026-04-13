@@ -1,0 +1,18 @@
+{
+  "cache_key": "314a97fa774d02038b45db7b9bf29328b6b2b2440b6d65bfc3f9957f0025fe75",
+  "cleaned_code_path": "generated_code/optimized/memory/python/7.py",
+  "cleaner_notes": [
+    "No markdown code fence found; using raw response text.",
+    "Validating callable signature: def filter_by_substring(strings: List[str], substring: str) -> List[str]:"
+  ],
+  "from_cache": false,
+  "language": "python",
+  "model_name": "gpt-5.4",
+  "objective": "memory",
+  "problem_id": "7",
+  "prompt_path": "prompts/memory/python/7.txt",
+  "raw_json_path": "results/raw_responses/memory/python/7.json",
+  "raw_text_path": "results/raw_responses/memory/python/7.txt",
+  "signature_valid": true,
+  "task_id": "Python/7"
+}

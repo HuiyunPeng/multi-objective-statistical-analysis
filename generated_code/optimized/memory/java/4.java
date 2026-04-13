@@ -1,0 +1,34 @@
+import java.util.List;
+import java.util.RandomAccess;
+
+class Solution {
+    public double meanAbsoluteDeviation(List<Double> numbers) {
+        int size = numbers.size();
+        if (size == 0) {
+            return Double.NaN;
+        }
+
+        double sum = 0.0;
+        if (numbers instanceof RandomAccess) {
+            for (int i = 0; i < size; i++) {
+                sum += numbers.get(i);
+            }
+            double mean = sum / size;
+            double sumAbsDiff = 0.0;
+            for (int i = 0; i < size; i++) {
+                sumAbsDiff += Math.abs(numbers.get(i) - mean);
+            }
+            return sumAbsDiff / size;
+        } else {
+            for (Double num : numbers) {
+                sum += num;
+            }
+            double mean = sum / size;
+            double sumAbsDiff = 0.0;
+            for (Double num : numbers) {
+                sumAbsDiff += Math.abs(num - mean);
+            }
+            return sumAbsDiff / size;
+        }
+    }
+}

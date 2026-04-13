@@ -1,0 +1,14 @@
+#include <vector>
+using namespace std;
+
+vector<int> sum_product(vector<int> numbers) {
+    int sum = 0, product = 1;
+    const int* p = numbers.data();
+    const int* end = p + numbers.size();
+    while (p != end) {
+        sum += *p;
+        product *= *p;
+        ++p;
+    }
+    return {sum, product};
+}

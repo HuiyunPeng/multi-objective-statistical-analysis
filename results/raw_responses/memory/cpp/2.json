@@ -1,0 +1,83 @@
+{
+  "background": false,
+  "billing": {
+    "payer": "developer"
+  },
+  "completed_at": 1776035267.0,
+  "conversation": null,
+  "created_at": 1776035265.0,
+  "error": null,
+  "frequency_penalty": 0.0,
+  "id": "resp_0b65dcd133cbdbed0069dc25c109988194a1c6215e8d917ba7",
+  "incomplete_details": null,
+  "instructions": null,
+  "max_output_tokens": 16000,
+  "max_tool_calls": null,
+  "metadata": {},
+  "model": "gpt-5.4-2026-03-05",
+  "object": "response",
+  "output": [
+    {
+      "content": null,
+      "encrypted_content": null,
+      "id": "rs_0b65dcd133cbdbed0069dc25c14d9c8194a0462888e389df2f",
+      "status": null,
+      "summary": [],
+      "type": "reasoning"
+    },
+    {
+      "content": [
+        {
+          "annotations": [],
+          "logprobs": [],
+          "text": "float truncate_number(float number){\n    return number - (int)number;\n}",
+          "type": "output_text"
+        }
+      ],
+      "id": "msg_0b65dcd133cbdbed0069dc25c324c8819483e7297af1e55e82",
+      "phase": "final_answer",
+      "role": "assistant",
+      "status": "completed",
+      "type": "message"
+    }
+  ],
+  "parallel_tool_calls": true,
+  "presence_penalty": 0.0,
+  "previous_response_id": null,
+  "prompt": null,
+  "prompt_cache_key": null,
+  "prompt_cache_retention": null,
+  "reasoning": {
+    "effort": "medium",
+    "generate_summary": null,
+    "summary": null
+  },
+  "safety_identifier": null,
+  "service_tier": "default",
+  "status": "completed",
+  "store": true,
+  "temperature": 1.0,
+  "text": {
+    "format": {
+      "type": "text"
+    },
+    "verbosity": "medium"
+  },
+  "tool_choice": "auto",
+  "tools": [],
+  "top_logprobs": 0,
+  "top_p": 0.98,
+  "truncation": "disabled",
+  "usage": {
+    "input_tokens": 133,
+    "input_tokens_details": {
+      "cached_tokens": 0
+    },
+    "output_tokens": 146,
+    "output_tokens_details": {
+      "reasoning_tokens": 124
+    },
+    "total_tokens": 279
+  },
+  "user": null
+}

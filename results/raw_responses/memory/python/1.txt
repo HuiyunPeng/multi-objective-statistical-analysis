@@ -1,0 +1,20 @@
+from typing import List
+
+
+def separate_paren_groups(paren_string: str) -> List[str]:
+    result = []
+    depth = 0
+    start = 0
+
+    for i, c in enumerate(paren_string):
+        if c == '(':
+            if depth == 0:
+                start = i
+            depth += 1
+        elif c == ')':
+            depth -= 1
+            if depth == 0:
+                group = paren_string[start:i + 1]
+                result.append(group.replace(' ', '') if ' ' in group else group)
+
+    return result

@@ -1,0 +1,19 @@
+from typing import List
+
+
+def intersperse(numbers: List[int], delimeter: int) -> List[int]:
+    n = len(numbers)
+    if n < 2:
+        return numbers[:]
+
+    result = [0] * (n * 2 - 1)
+    j = 0
+    last = n - 1
+
+    for i in range(last):
+        result[j] = numbers[i]
+        result[j + 1] = delimeter
+        j += 2
+
+    result[j] = numbers[last]
+    return result

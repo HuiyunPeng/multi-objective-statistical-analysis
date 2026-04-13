@@ -1,0 +1,11 @@
+#include <vector>
+
+std::vector<int> sum_product(std::vector<int> numbers) {
+    int sum = 0;
+    int product = 1;
+    for (int x : numbers) {
+        sum += x;
+        product *= x;
+    }
+    return {sum, product};
+}

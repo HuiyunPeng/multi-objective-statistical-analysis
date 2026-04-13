@@ -1,0 +1,13 @@
+#include <vector>
+using namespace std;
+
+bool below_zero(vector<int> operations) {
+    long long balance = 0;
+    const int* p = operations.data();
+    const int* end = p + operations.size();
+    while (p != end) {
+        balance += *p++;
+        if (balance < 0) return true;
+    }
+    return false;
+}

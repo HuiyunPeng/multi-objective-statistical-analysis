@@ -1,0 +1,18 @@
+{
+  "cache_key": "6ce49bb6ea3d4efb15ba5540325db5199124598e51d717dc482b1259b3366453",
+  "cleaned_code_path": "generated_code/optimized/runtime/java/4.java",
+  "cleaner_notes": [
+    "No markdown code fence found; using raw response text.",
+    "Validating callable signature: public double meanAbsoluteDeviation(List<Double> numbers) {"
+  ],
+  "from_cache": false,
+  "language": "java",
+  "model_name": "gpt-5.4",
+  "objective": "runtime",
+  "problem_id": "4",
+  "prompt_path": "prompts/runtime/java/4.txt",
+  "raw_json_path": "results/raw_responses/runtime/java/4.json",
+  "raw_text_path": "results/raw_responses/runtime/java/4.txt",
+  "signature_valid": true,
+  "task_id": "Java/4"
+}

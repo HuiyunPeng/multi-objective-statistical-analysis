@@ -1,0 +1,83 @@
+{
+  "background": false,
+  "billing": {
+    "payer": "developer"
+  },
+  "completed_at": 1776035153.0,
+  "conversation": null,
+  "created_at": 1776035146.0,
+  "error": null,
+  "frequency_penalty": 0.0,
+  "id": "resp_0cb31c313db18f230069dc254a8d7c819490ca00863b8ea123",
+  "incomplete_details": null,
+  "instructions": null,
+  "max_output_tokens": 16000,
+  "max_tool_calls": null,
+  "metadata": {},
+  "model": "gpt-5.4-2026-03-05",
+  "object": "response",
+  "output": [
+    {
+      "content": null,
+      "encrypted_content": null,
+      "id": "rs_0cb31c313db18f230069dc254c61a881948a026477acde9ea0",
+      "status": null,
+      "summary": [],
+      "type": "reasoning"
+    },
+    {
+      "content": [
+        {
+          "annotations": [],
+          "logprobs": [],
+          "text": "from typing import List\n\n\ndef intersperse(numbers: List[int], delimeter: int) -> List[int]:\n    n = len(numbers)\n    if n == 0:\n        return []\n\n    result = [0] * (2 * n - 1)\n    result[0] = numbers[0]\n\n    j = 1\n    for i in range(1, n):\n        result[j] = delimeter\n        result[j + 1] = numbers[i]\n        j += 2\n\n    return result",
+          "type": "output_text"
+        }
+      ],
+      "id": "msg_0cb31c313db18f230069dc255066c481949faad4ebfd8c1cc2",
+      "phase": "final_answer",
+      "role": "assistant",
+      "status": "completed",
+      "type": "message"
+    }
+  ],
+  "parallel_tool_calls": true,
+  "presence_penalty": 0.0,
+  "previous_response_id": null,
+  "prompt": null,
+  "prompt_cache_key": null,
+  "prompt_cache_retention": null,
+  "reasoning": {
+    "effort": "medium",
+    "generate_summary": null,
+    "summary": null
+  },
+  "safety_identifier": null,
+  "service_tier": "default",
+  "status": "completed",
+  "store": true,
+  "temperature": 1.0,
+  "text": {
+    "format": {
+      "type": "text"
+    },
+    "verbosity": "medium"
+  },
+  "tool_choice": "auto",
+  "tools": [],
+  "top_logprobs": 0,
+  "top_p": 0.98,
+  "truncation": "disabled",
+  "usage": {
+    "input_tokens": 182,
+    "input_tokens_details": {
+      "cached_tokens": 0
+    },
+    "output_tokens": 438,
+    "output_tokens_details": {
+      "reasoning_tokens": 323
+    },
+    "total_tokens": 620
+  },
+  "user": null
+}

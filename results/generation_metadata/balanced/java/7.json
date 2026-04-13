@@ -1,0 +1,18 @@
+{
+  "cache_key": "a304aaa2adde65b75ef71722324b04bae8a74243ddcad4c134d56969fbb1fcfc",
+  "cleaned_code_path": "generated_code/optimized/balanced/java/7.java",
+  "cleaner_notes": [
+    "No markdown code fence found; using raw response text.",
+    "Validating callable signature: public List<String> filterBySubstring(List<String> strings, String substring) {"
+  ],
+  "from_cache": false,
+  "language": "java",
+  "model_name": "gpt-5.4",
+  "objective": "balanced",
+  "problem_id": "7",
+  "prompt_path": "prompts/balanced/java/7.txt",
+  "raw_json_path": "results/raw_responses/balanced/java/7.json",
+  "raw_text_path": "results/raw_responses/balanced/java/7.txt",
+  "signature_valid": true,
+  "task_id": "Java/7"
+}

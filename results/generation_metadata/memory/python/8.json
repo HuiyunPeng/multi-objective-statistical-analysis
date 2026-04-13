@@ -1,0 +1,18 @@
+{
+  "cache_key": "0db985943c63573311c5220cc3904e8613f5945152e94b315aa18d3fe9e3d726",
+  "cleaned_code_path": "generated_code/optimized/memory/python/8.py",
+  "cleaner_notes": [
+    "No markdown code fence found; using raw response text.",
+    "Validating callable signature: def sum_product(numbers: List[int]) -> Tuple[int, int]:"
+  ],
+  "from_cache": false,
+  "language": "python",
+  "model_name": "gpt-5.4",
+  "objective": "memory",
+  "problem_id": "8",
+  "prompt_path": "prompts/memory/python/8.txt",
+  "raw_json_path": "results/raw_responses/memory/python/8.json",
+  "raw_text_path": "results/raw_responses/memory/python/8.txt",
+  "signature_valid": true,
+  "task_id": "Python/8"
+}

@@ -1,0 +1,41 @@
+                               OLS Regression Results                               
+====================================================================================
+Dep. Variable:     memory_improvement_ratio   R-squared:                       0.547
+Model:                                  OLS   Adj. R-squared:                  0.402
+Method:                       Least Squares   F-statistic:                     3.763
+Date:                      Sun, 12 Apr 2026   Prob (F-statistic):           0.000108
+Time:                              19:27:18   Log-Likelihood:                 15.034
+No. Observations:                        71   AIC:                             5.933
+Df Residuals:                            53   BIC:                             46.66
+Df Model:                                17                                         
+Covariance Type:                  nonrobust                                         
+==========================================================================================================================
+                                                             coef    std err          t      P>|t|      [0.025      0.975]
+--------------------------------------------------------------------------------------------------------------------------
+Intercept                                                  0.8360      0.031     27.047      0.000       0.774       0.898
+C(problem_id, Sum)[S.0]                                   -0.0714      0.082     -0.867      0.390      -0.237       0.094
+C(problem_id, Sum)[S.1]                                   -0.0037      0.088     -0.042      0.967      -0.180       0.172
+C(problem_id, Sum)[S.2]                                   -0.0041      0.088     -0.046      0.963      -0.180       0.172
+C(problem_id, Sum)[S.3]                                   -0.0666      0.078     -0.856      0.396      -0.223       0.090
+C(problem_id, Sum)[S.4]                                   -0.0007      0.083     -0.009      0.993      -0.167       0.166
+C(problem_id, Sum)[S.5]                                   -0.0792      0.082     -0.962      0.341      -0.244       0.086
+C(problem_id, Sum)[S.6]                                   -0.0258      0.083     -0.310      0.758      -0.192       0.141
+C(problem_id, Sum)[S.7]                                    0.0592      0.082      0.718      0.476      -0.106       0.224
+C(problem_id, Sum)[S.8]                                    0.2018      0.082      2.450      0.018       0.037       0.367
+C(objective, Sum)[S.balanced]                              0.0270      0.043      0.628      0.533      -0.059       0.113
+C(objective, Sum)[S.memory]                               -0.0943      0.045     -2.076      0.043      -0.185      -0.003
+C(language, Sum)[S.cpp]                                   -0.3479      0.052     -6.719      0.000      -0.452      -0.244
+C(language, Sum)[S.java]                                   0.1738      0.039      4.450      0.000       0.095       0.252
+C(objective, Sum)[S.balanced]:C(language, Sum)[S.cpp]      0.0632      0.072      0.882      0.382      -0.081       0.207
+C(objective, Sum)[S.memory]:C(language, Sum)[S.cpp]       -0.2094      0.077     -2.710      0.009      -0.364      -0.054
+C(objective, Sum)[S.balanced]:C(language, Sum)[S.java]    -0.0281      0.055     -0.514      0.609      -0.138       0.082
+C(objective, Sum)[S.memory]:C(language, Sum)[S.java]       0.0986      0.057      1.742      0.087      -0.015       0.212
+==============================================================================
+Omnibus:                       54.055   Durbin-Watson:                   1.540
+Prob(Omnibus):                  0.000   Jarque-Bera (JB):              583.094
+Skew:                           1.806   Prob(JB):                    2.41e-127
+Kurtosis:                      16.567   Cond. No.                         4.92
+==============================================================================
+
+Notes:
+[1] Standard Errors assume that the covariance matrix of the errors is correctly specified.

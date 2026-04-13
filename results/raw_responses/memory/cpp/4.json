@@ -1,0 +1,83 @@
+{
+  "background": false,
+  "billing": {
+    "payer": "developer"
+  },
+  "completed_at": 1776035291.0,
+  "conversation": null,
+  "created_at": 1776035288.0,
+  "error": null,
+  "frequency_penalty": 0.0,
+  "id": "resp_0ddea86157bfe3860069dc25d836e88197b2dd2f382f7eb737",
+  "incomplete_details": null,
+  "instructions": null,
+  "max_output_tokens": 16000,
+  "max_tool_calls": null,
+  "metadata": {},
+  "model": "gpt-5.4-2026-03-05",
+  "object": "response",
+  "output": [
+    {
+      "content": null,
+      "encrypted_content": null,
+      "id": "rs_0ddea86157bfe3860069dc25d8974c8197b72ca2e14cd481ea",
+      "status": null,
+      "summary": [],
+      "type": "reasoning"
+    },
+    {
+      "content": [
+        {
+          "annotations": [],
+          "logprobs": [],
+          "text": "#include <cmath>\n#include <vector>\nusing namespace std;\n\nfloat mean_absolute_deviation(vector<float> numbers) {\n    const size_t n = numbers.size();\n    float sum = 0.0f;\n    for (size_t i = 0; i < n; ++i) sum += numbers[i];\n    const float avg = sum / n;\n    float dev = 0.0f;\n    for (size_t i = 0; i < n; ++i) dev += fabsf(numbers[i] - avg);\n    return dev / n;\n}",
+          "type": "output_text"
+        }
+      ],
+      "id": "msg_0ddea86157bfe3860069dc25da0d4081978b25ecbfc540b93e",
+      "phase": "final_answer",
+      "role": "assistant",
+      "status": "completed",
+      "type": "message"
+    }
+  ],
+  "parallel_tool_calls": true,
+  "presence_penalty": 0.0,
+  "previous_response_id": null,
+  "prompt": null,
+  "prompt_cache_key": null,
+  "prompt_cache_retention": null,
+  "reasoning": {
+    "effort": "medium",
+    "generate_summary": null,
+    "summary": null
+  },
+  "safety_identifier": null,
+  "service_tier": "default",
+  "status": "completed",
+  "store": true,
+  "temperature": 1.0,
+  "text": {
+    "format": {
+      "type": "text"
+    },
+    "verbosity": "medium"
+  },
+  "tool_choice": "auto",
+  "tools": [],
+  "top_logprobs": 0,
+  "top_p": 0.98,
+  "truncation": "disabled",
+  "usage": {
+    "input_tokens": 243,
+    "input_tokens_details": {
+      "cached_tokens": 0
+    },
+    "output_tokens": 221,
+    "output_tokens_details": {
+      "reasoning_tokens": 98
+    },
+    "total_tokens": 464
+  },
+  "user": null
+}

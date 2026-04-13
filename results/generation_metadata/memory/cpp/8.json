@@ -1,0 +1,18 @@
+{
+  "cache_key": "a15275965549df108a85f0d04f381aa3ec8e6465312c55ebb88c5cd7f2ebea9d",
+  "cleaned_code_path": "generated_code/optimized/memory/cpp/8.cpp",
+  "cleaner_notes": [
+    "No markdown code fence found; using raw response text.",
+    "Validating callable signature: vector<int> sum_product(vector<int> numbers){"
+  ],
+  "from_cache": false,
+  "language": "cpp",
+  "model_name": "gpt-5.4",
+  "objective": "memory",
+  "problem_id": "8",
+  "prompt_path": "prompts/memory/cpp/8.txt",
+  "raw_json_path": "results/raw_responses/memory/cpp/8.json",
+  "raw_text_path": "results/raw_responses/memory/cpp/8.txt",
+  "signature_valid": true,
+  "task_id": "CPP/8"
+}

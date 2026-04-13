@@ -1,0 +1,18 @@
+{
+  "cache_key": "6f9268e53fb3866e6afb1848252714be0d1098e788f2f90c6c54f28a84dcaaa2",
+  "cleaned_code_path": "generated_code/optimized/runtime/cpp/6.cpp",
+  "cleaner_notes": [
+    "No markdown code fence found; using raw response text.",
+    "Validating callable signature: vector<int> parse_nested_parens(string paren_string){"
+  ],
+  "from_cache": false,
+  "language": "cpp",
+  "model_name": "gpt-5.4",
+  "objective": "runtime",
+  "problem_id": "6",
+  "prompt_path": "prompts/runtime/cpp/6.txt",
+  "raw_json_path": "results/raw_responses/runtime/cpp/6.json",
+  "raw_text_path": "results/raw_responses/runtime/cpp/6.txt",
+  "signature_valid": true,
+  "task_id": "CPP/6"
+}

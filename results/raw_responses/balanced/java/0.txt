@@ -1,0 +1,23 @@
+import java.util.*;
+
+class Solution {
+    public boolean hasCloseElements(List<Double> numbers, double threshold) {
+        int n = numbers.size();
+        if (n < 2 || !(threshold > 0.0)) return false;
+
+        double[] arr = new double[n];
+        int i = 0;
+        for (Double v : numbers) {
+            arr[i++] = v;
+        }
+
+        Arrays.sort(arr);
+
+        double prev = arr[0];
+        for (i = 1; i < n; i++) {
+            if (arr[i] - prev < threshold) return true;
+            prev = arr[i];
+        }
+        return false;
+    }
+}

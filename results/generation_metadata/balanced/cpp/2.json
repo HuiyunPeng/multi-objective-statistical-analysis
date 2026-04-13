@@ -1,0 +1,18 @@
+{
+  "cache_key": "c91fdc48adef59b91998d86fb1f9b2db4205a8c48813ec5a6f5739eedf8e48a2",
+  "cleaned_code_path": "generated_code/optimized/balanced/cpp/2.cpp",
+  "cleaner_notes": [
+    "No markdown code fence found; using raw response text.",
+    "Validating callable signature: float truncate_number(float number){"
+  ],
+  "from_cache": false,
+  "language": "cpp",
+  "model_name": "gpt-5.4",
+  "objective": "balanced",
+  "problem_id": "2",
+  "prompt_path": "prompts/balanced/cpp/2.txt",
+  "raw_json_path": "results/raw_responses/balanced/cpp/2.json",
+  "raw_text_path": "results/raw_responses/balanced/cpp/2.txt",
+  "signature_valid": true,
+  "task_id": "CPP/2"
+}

@@ -1,0 +1,83 @@
+{
+  "background": false,
+  "billing": {
+    "payer": "developer"
+  },
+  "completed_at": 1776035497.0,
+  "conversation": null,
+  "created_at": 1776035493.0,
+  "error": null,
+  "frequency_penalty": 0.0,
+  "id": "resp_0727ccf7402dad0d0069dc26a5169c8190be17312a633e028c",
+  "incomplete_details": null,
+  "instructions": null,
+  "max_output_tokens": 16000,
+  "max_tool_calls": null,
+  "metadata": {},
+  "model": "gpt-5.4-2026-03-05",
+  "object": "response",
+  "output": [
+    {
+      "content": null,
+      "encrypted_content": null,
+      "id": "rs_0727ccf7402dad0d0069dc26a5586481908b7a878cac63650e",
+      "status": null,
+      "summary": [],
+      "type": "reasoning"
+    },
+    {
+      "content": [
+        {
+          "annotations": [],
+          "logprobs": [],
+          "text": "import java.util.*;\n\nclass Solution {\n    /**\n    Insert a number 'delimeter' between every two consecutive elements of input list `numbers'\n    >>> intersperse(List.of(), 4)\n    []\n    >>> intersperse(Arrays.asList(1, 2, 3), 4)\n    [1, 4, 2, 4, 3]\n     */\n    public List<Integer> intersperse(List<Integer> numbers, int delimiter) {\n        int n = numbers.size();\n        if (n == 0) {\n            return Collections.emptyList();\n        }\n\n        List<Integer> result = new ArrayList<>(n * 2 - 1);\n        Iterator<Integer> it = numbers.iterator();\n        result.add(it.next());\n\n        while (it.hasNext()) {\n            result.add(delimiter);\n            result.add(it.next());\n        }\n\n        return result;\n    }\n}",
+          "type": "output_text"
+        }
+      ],
+      "id": "msg_0727ccf7402dad0d0069dc26a748688190b6fc94d34c8c945e",
+      "phase": "final_answer",
+      "role": "assistant",
+      "status": "completed",
+      "type": "message"
+    }
+  ],
+  "parallel_tool_calls": true,
+  "presence_penalty": 0.0,
+  "previous_response_id": null,
+  "prompt": null,
+  "prompt_cache_key": null,
+  "prompt_cache_retention": null,
+  "reasoning": {
+    "effort": "medium",
+    "generate_summary": null,
+    "summary": null
+  },
+  "safety_identifier": null,
+  "service_tier": "default",
+  "status": "completed",
+  "store": true,
+  "temperature": 1.0,
+  "text": {
+    "format": {
+      "type": "text"
+    },
+    "verbosity": "medium"
+  },
+  "tool_choice": "auto",
+  "tools": [],
+  "top_logprobs": 0,
+  "top_p": 0.98,
+  "truncation": "disabled",
+  "usage": {
+    "input_tokens": 236,
+    "input_tokens_details": {
+      "cached_tokens": 0
+    },
+    "output_tokens": 335,
+    "output_tokens_details": {
+      "reasoning_tokens": 144
+    },
+    "total_tokens": 571
+  },
+  "user": null
+}

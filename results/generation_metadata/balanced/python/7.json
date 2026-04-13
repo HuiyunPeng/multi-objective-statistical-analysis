@@ -1,0 +1,18 @@
+{
+  "cache_key": "a16ff5535f0dc964a9c22bea3a4a31eeaf5afdea2a684fb0c883b42a02e15a27",
+  "cleaned_code_path": "generated_code/optimized/balanced/python/7.py",
+  "cleaner_notes": [
+    "No markdown code fence found; using raw response text.",
+    "Validating callable signature: def filter_by_substring(strings: List[str], substring: str) -> List[str]:"
+  ],
+  "from_cache": false,
+  "language": "python",
+  "model_name": "gpt-5.4",
+  "objective": "balanced",
+  "problem_id": "7",
+  "prompt_path": "prompts/balanced/python/7.txt",
+  "raw_json_path": "results/raw_responses/balanced/python/7.json",
+  "raw_text_path": "results/raw_responses/balanced/python/7.txt",
+  "signature_valid": true,
+  "task_id": "Python/7"
+}

@@ -1,5 +1,3 @@
 .venv
-generated_code/
-logs/
-results/
 .env
+__pycache__/

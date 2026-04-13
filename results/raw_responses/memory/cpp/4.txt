@@ -1,0 +1,13 @@
+#include <cmath>
+#include <vector>
+using namespace std;
+
+float mean_absolute_deviation(vector<float> numbers) {
+    const size_t n = numbers.size();
+    float sum = 0.0f;
+    for (size_t i = 0; i < n; ++i) sum += numbers[i];
+    const float avg = sum / n;
+    float dev = 0.0f;
+    for (size_t i = 0; i < n; ++i) dev += fabsf(numbers[i] - avg);
+    return dev / n;
+}

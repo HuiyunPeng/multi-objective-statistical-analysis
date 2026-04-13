@@ -1,0 +1,16 @@
+from typing import List
+
+
+def rolling_max(numbers: List[int]) -> List[int]:
+    n = len(numbers)
+    if n == 0:
+        return []
+    result = [0] * n
+    running_max = numbers[0]
+    result[0] = running_max
+    for i in range(1, n):
+        v = numbers[i]
+        if v > running_max:
+            running_max = v
+        result[i] = running_max
+    return result

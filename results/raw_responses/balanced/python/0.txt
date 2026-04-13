@@ -1,0 +1,13 @@
+from typing import List
+
+
+def has_close_elements(numbers: List[float], threshold: float) -> bool:
+    if threshold <= 0 or len(numbers) < 2:
+        return False
+    nums = sorted(numbers)
+    prev = nums[0]
+    for curr in nums[1:]:
+        if curr - prev < threshold:
+            return True
+        prev = curr
+    return False

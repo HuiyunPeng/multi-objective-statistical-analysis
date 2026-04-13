@@ -1,0 +1,21 @@
+import java.util.*;
+
+class Solution {
+    public List<Integer> rollingMax(List<Integer> numbers) {
+        int n = numbers.size();
+        List<Integer> result = new ArrayList<>(n);
+        if (n == 0) return result;
+
+        Iterator<Integer> it = numbers.iterator();
+        int max = it.next();
+        result.add(max);
+
+        while (it.hasNext()) {
+            int v = it.next();
+            if (v > max) max = v;
+            result.add(max);
+        }
+
+        return result;
+    }
+}

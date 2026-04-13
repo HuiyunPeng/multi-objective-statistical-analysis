@@ -1,0 +1,30 @@
+from typing import List
+
+
+def parse_nested_parens(paren_string: str) -> List[int]:
+    res = []
+    append = res.append
+
+    depth = 0
+    max_depth = 0
+    in_group = False
+
+    for c in paren_string:
+        if c == '(':
+            in_group = True
+            depth += 1
+            if depth > max_depth:
+                max_depth = depth
+        elif c == ')':
+            depth -= 1
+        else:
+            if in_group:
+                append(max_depth)
+                depth = 0
+                max_depth = 0
+                in_group = False
+
+    if in_group:
+        append(max_depth)
+
+    return res

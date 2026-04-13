@@ -1,0 +1,18 @@
+{
+  "cache_key": "de805ba42a2bc05fc49a535090ae5a1425ca7988bb2d70410792c79e03cc3664",
+  "cleaned_code_path": "generated_code/optimized/memory/java/3.java",
+  "cleaner_notes": [
+    "No markdown code fence found; using raw response text.",
+    "Validating callable signature: public boolean belowZero(List<Integer> operations) {"
+  ],
+  "from_cache": false,
+  "language": "java",
+  "model_name": "gpt-5.4",
+  "objective": "memory",
+  "problem_id": "3",
+  "prompt_path": "prompts/memory/java/3.txt",
+  "raw_json_path": "results/raw_responses/memory/java/3.json",
+  "raw_text_path": "results/raw_responses/memory/java/3.txt",
+  "signature_valid": true,
+  "task_id": "Java/3"
+}

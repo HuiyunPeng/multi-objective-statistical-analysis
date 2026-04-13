@@ -1,0 +1,18 @@
+{
+  "cache_key": "62aa3c08a90a25f8c67361a65fe639cdbba8b2fbf33614318b12f1eb48773623",
+  "cleaned_code_path": "generated_code/optimized/runtime/java/5.java",
+  "cleaner_notes": [
+    "No markdown code fence found; using raw response text.",
+    "Validating callable signature: public List<Integer> intersperse(List<Integer> numbers, int delimiter) {"
+  ],
+  "from_cache": false,
+  "language": "java",
+  "model_name": "gpt-5.4",
+  "objective": "runtime",
+  "problem_id": "5",
+  "prompt_path": "prompts/runtime/java/5.txt",
+  "raw_json_path": "results/raw_responses/runtime/java/5.json",
+  "raw_text_path": "results/raw_responses/runtime/java/5.txt",
+  "signature_valid": true,
+  "task_id": "Java/5"
+}

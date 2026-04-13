@@ -1,0 +1,186 @@
+{
+  "compile_error": false,
+  "compile_returncode": null,
+  "compile_stderr": "",
+  "compile_stdout": "",
+  "correctness_pass": true,
+  "correctness_returncode": 0,
+  "correctness_stderr": "",
+  "correctness_stdout": "",
+  "language": "python",
+  "memory_cv": 0.1660660179377608,
+  "memory_mean": 7745536.0,
+  "memory_std": 1286270.320313572,
+  "objective": null,
+  "problem_id": "7",
+  "runtime_cv": 0.17503760332442594,
+  "runtime_mean": 0.06789729364099913,
+  "runtime_std": 0.011884579551135274,
+  "samples": [
+    {
+      "peak_memory_bytes": 7553024,
+      "repetition_index": 1,
+      "returncode": 0,
+      "runtime_seconds": 0.06877258396707475,
+      "stderr": "",
+      "stdout": ""
+    },
+    {
+      "peak_memory_bytes": 4096000,
+      "repetition_index": 2,
+      "returncode": 0,
+      "runtime_seconds": 0.08593437494710088,
+      "stderr": "",
+      "stdout": ""
+    },
+    {
+      "peak_memory_bytes": 7847936,
+      "repetition_index": 3,
+      "returncode": 0,
+      "runtime_seconds": 0.06392304098699242,
+      "stderr": "",
+      "stdout": ""
+    },
+    {
+      "peak_memory_bytes": 7208960,
+      "repetition_index": 4,
+      "returncode": 0,
+      "runtime_seconds": 0.06151129200588912,
+      "stderr": "",
+      "stdout": ""
+    },
+    {
+      "peak_memory_bytes": 7880704,
+      "repetition_index": 5,
+      "returncode": 0,
+      "runtime_seconds": 0.061808375059626997,
+      "stderr": "",
+      "stdout": ""
+    },
+    {
+      "peak_memory_bytes": 7749632,
+      "repetition_index": 6,
+      "returncode": 0,
+      "runtime_seconds": 0.061086583067663014,
+      "stderr": "",
+      "stdout": ""
+    },
+    {
+      "peak_memory_bytes": 7913472,
+      "repetition_index": 7,
+      "returncode": 0,
+      "runtime_seconds": 0.06858358299359679,
+      "stderr": "",
+      "stdout": ""
+    },
+    {
+      "peak_memory_bytes": 7864320,
+      "repetition_index": 8,
+      "returncode": 0,
+      "runtime_seconds": 0.06268654193263501,
+      "stderr": "",
+      "stdout": ""
+    },
+    {
+      "peak_memory_bytes": 7749632,
+      "repetition_index": 9,
+      "returncode": 0,
+      "runtime_seconds": 0.061309208045713603,
+      "stderr": "",
+      "stdout": ""
+    },
+    {
+      "peak_memory_bytes": 7798784,
+      "repetition_index": 10,
+      "returncode": 0,
+      "runtime_seconds": 0.06145145802292973,
+      "stderr": "",
+      "stdout": ""
+    },
+    {
+      "peak_memory_bytes": 8077312,
+      "repetition_index": 11,
+      "returncode": 0,
+      "runtime_seconds": 0.06174316699616611,
+      "stderr": "",
+      "stdout": ""
+    },
+    {
+      "peak_memory_bytes": 7225344,
+      "repetition_index": 12,
+      "returncode": 0,
+      "runtime_seconds": 0.058693749946542084,
+      "stderr": "",
+      "stdout": ""
+    },
+    {
+      "peak_memory_bytes": 7110656,
+      "repetition_index": 13,
+      "returncode": 0,
+      "runtime_seconds": 0.06307691591791809,
+      "stderr": "",
+      "stdout": ""
+    },
+    {
+      "peak_memory_bytes": 8404992,
+      "repetition_index": 14,
+      "returncode": 0,
+      "runtime_seconds": 0.07389054098166525,
+      "stderr": "",
+      "stdout": ""
+    },
+    {
+      "peak_memory_bytes": 7323648,
+      "repetition_index": 15,
+      "returncode": 0,
+      "runtime_seconds": 0.06180779205169529,
+      "stderr": "",
+      "stdout": ""
+    },
+    {
+      "peak_memory_bytes": 7651328,
+      "repetition_index": 16,
+      "returncode": 0,
+      "runtime_seconds": 0.06118420802522451,
+      "stderr": "",
+      "stdout": ""
+    },
+    {
+      "peak_memory_bytes": 11763712,
+      "repetition_index": 17,
+      "returncode": 0,
+      "runtime_seconds": 0.10989820794202387,
+      "stderr": "",
+      "stdout": ""
+    },
+    {
+      "peak_memory_bytes": 7831552,
+      "repetition_index": 18,
+      "returncode": 0,
+      "runtime_seconds": 0.06381279102060944,
+      "stderr": "",
+      "stdout": ""
+    },
+    {
+      "peak_memory_bytes": 8142848,
+      "repetition_index": 19,
+      "returncode": 0,
+      "runtime_seconds": 0.07328316697385162,
+      "stderr": "",
+      "stdout": ""
+    },
+    {
+      "peak_memory_bytes": 7716864,
+      "repetition_index": 20,
+      "returncode": 0,
+      "runtime_seconds": 0.0734882919350639,
+      "stderr": "",
+      "stdout": ""
+    }
+  ],
+  "source_path": "/Users/peng397/Desktop/multi-objective-statistical-analysis/generated_code/baseline/python/7.py",
+  "task_id": "Python/7",
+  "test_error": false,
+  "timeout": false,
+  "variant": "before"
+}

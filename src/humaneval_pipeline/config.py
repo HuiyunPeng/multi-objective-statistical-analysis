@@ -23,7 +23,7 @@ class DatasetConfig:
 class ModelConfig:
     name: str = "gpt-5.4"
     reasoning_effort: str = "medium"
-    temperature: float = 0.0
+    temperature: float | None = None
     max_output_tokens: int = 16000
     retries: int = 3
     retry_backoff_seconds: float = 2.0

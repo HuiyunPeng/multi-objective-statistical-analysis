@@ -1,0 +1,23 @@
+import java.util.*;
+
+class Solution {
+    /**
+    Filter an input list of strings only for ones that contain given substring
+    >>> filterBySubstring(List.of(), "a")
+    []
+    >>> filterBySubstring(Arrays.asList("abc", "bacd", "cde", "array"), "a")
+    ["abc", "bacd", "array"]
+     */
+    public List<String> filterBySubstring(List<String> strings, String substring) {
+        List<String> result = null;
+        for (String x : strings) {
+            if (x.contains(substring)) {
+                if (result == null) {
+                    result = new ArrayList<>(1);
+                }
+                result.add(x);
+            }
+        }
+        return result == null ? Collections.emptyList() : result;
+    }
+}

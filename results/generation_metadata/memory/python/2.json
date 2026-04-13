@@ -1,0 +1,18 @@
+{
+  "cache_key": "58c7214a5a755b9ddb50e7054742a994bd782acfe569bdab00d778033db71008",
+  "cleaned_code_path": "generated_code/optimized/memory/python/2.py",
+  "cleaner_notes": [
+    "No markdown code fence found; using raw response text.",
+    "Validating callable signature: def truncate_number(number: float) -> float:"
+  ],
+  "from_cache": false,
+  "language": "python",
+  "model_name": "gpt-5.4",
+  "objective": "memory",
+  "problem_id": "2",
+  "prompt_path": "prompts/memory/python/2.txt",
+  "raw_json_path": "results/raw_responses/memory/python/2.json",
+  "raw_text_path": "results/raw_responses/memory/python/2.txt",
+  "signature_valid": true,
+  "task_id": "Python/2"
+}

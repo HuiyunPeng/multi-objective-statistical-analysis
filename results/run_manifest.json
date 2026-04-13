@@ -1,0 +1,31 @@
+{
+  "dataset_languages": [
+    "python",
+    "cpp",
+    "java"
+  ],
+  "dataset_source_urls": [
+    "https://huggingface.co/datasets/zai-org/humaneval-x/resolve/main/data/{language}/data/humaneval.jsonl",
+    "https://huggingface.co/datasets/THUDM/humaneval-x/resolve/main/data/{language}/data/humaneval.jsonl"
+  ],
+  "platform": "macOS-15.7.4-arm64-arm-64bit-Mach-O",
+  "python_version": "3.13.7 (main, Aug 14 2025, 11:12:11) [Clang 16.0.0 (clang-1600.0.26.6)]",
+  "selected_problem_ids": [
+    "0",
+    "1",
+    "2",
+    "3",
+    "4",
+    "5",
+    "6",
+    "7",
+    "8",
+    "9"
+  ],
+  "tool_versions": {
+    "cpp_compiler": "Apple clang version 17.0.0 (clang-1700.6.3.2)\nTarget: arm64-apple-darwin24.6.0\nThread model: posix\nInstalledDir: /Library/Developer/CommandLineTools/usr/bin",
+    "java": "openjdk version \"25.0.1\" 2025-10-21\nOpenJDK Runtime Environment Homebrew (build 25.0.1)\nOpenJDK 64-Bit Server VM Homebrew (build 25.0.1, mixed mode, sharing)",
+    "javac": "javac 25.0.1",
+    "python": "Python 3.13.7"
+  }
+}

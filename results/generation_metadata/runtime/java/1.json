@@ -1,0 +1,18 @@
+{
+  "cache_key": "312636144057717e0d280f3e2a5f58aeaa265e4f6adee7b71a79726c8d01b6a4",
+  "cleaned_code_path": "generated_code/optimized/runtime/java/1.java",
+  "cleaner_notes": [
+    "No markdown code fence found; using raw response text.",
+    "Validating callable signature: public List<String> separateParenGroups(String paren_string) {"
+  ],
+  "from_cache": false,
+  "language": "java",
+  "model_name": "gpt-5.4",
+  "objective": "runtime",
+  "problem_id": "1",
+  "prompt_path": "prompts/runtime/java/1.txt",
+  "raw_json_path": "results/raw_responses/runtime/java/1.json",
+  "raw_text_path": "results/raw_responses/runtime/java/1.txt",
+  "signature_valid": true,
+  "task_id": "Java/1"
+}
