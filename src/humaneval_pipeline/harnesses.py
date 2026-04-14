@@ -1,13 +1,12 @@
 from __future__ import annotations
 
-import re
 import shutil
 import subprocess
 import tempfile
 from dataclasses import dataclass
 from pathlib import Path
 
-from .config import ExecutionConfig
+from .config import ExperimentConfig
 from .models import TaskRecord
 
 
@@ -35,7 +34,14 @@ class PreparedProgram:
 class BaseHarness:
     language: str
 
-    def prepare(self, task: TaskRecord, code: str, execution: ExecutionConfig) -> PreparedProgram:
+    def prepare_correctness(
+        self, task: TaskRecord, code: str, config: ExperimentConfig
+    ) -> PreparedProgram:
+        raise NotImplementedError
+
+    def prepare_performance(
+        self, task: TaskRecord, code: str, config: ExperimentConfig
+    ) -> PreparedProgram:
         raise NotImplementedError
 
     @staticmethod
@@ -43,43 +49,46 @@ class BaseHarness:
         return Path(tempfile.mkdtemp(prefix=f"humaneval_{language}_"))
 
     @staticmethod
-    def _combined_source(code: str, test_code: str) -> str:
-        return f"{code.rstrip()}\n\n{test_code.rstrip()}\n"
-
-
-class PythonHarness(BaseHarness):
-    language = "python"
-
-    def prepare(self, task: TaskRecord, code: str, execution: ExecutionConfig) -> PreparedProgram:
-        workdir = self._tempdir(self.language)
-        source_file = workdir / "solution.py"
-        source_file.write_text(self._combined_source(code, task.test), encoding="utf-8")
-        return PreparedProgram(
-            language=self.language,
-            workdir=workdir,
-            run_command=[execution.python_executable, str(source_file)],
-            source_file=source_file,
-        )
+    def _combined_source(code: str, harness_code: str) -> str:
+        return f"{code.rstrip()}\n\n{harness_code.rstrip()}\n"
 
 
 class CppHarness(BaseHarness):
     language = "cpp"
 
-    def prepare(self, task: TaskRecord, code: str, execution: ExecutionConfig) -> PreparedProgram:
+    def prepare_correctness(
+        self, task: TaskRecord, code: str, config: ExperimentConfig
+    ) -> PreparedProgram:
+        return self._prepare(task, code, task.test_code, config)
+
+    def prepare_performance(
+        self, task: TaskRecord, code: str, config: ExperimentConfig
+    ) -> PreparedProgram:
+        if not task.performance_test_code:
+            raise ValueError(f"Task {task.task_id} does not define performance_test_code.")
+        return self._prepare(task, code, task.performance_test_code, config)
+
+    def _prepare(
+        self,
+        task: TaskRecord,
+        code: str,
+        harness_code: str,
+        config: ExperimentConfig,
+    ) -> PreparedProgram:
         workdir = self._tempdir(self.language)
         source_file = workdir / "solution.cpp"
         executable = workdir / "solution.out"
-        source_file.write_text(self._combined_source(code, task.test), encoding="utf-8")
+        source_file.write_text(self._combined_source(code, harness_code), encoding="utf-8")
 
         command = [
-            execution.cpp_compiler,
-            *execution.cpp_compile_flags,
+            config.toolchain.cpp_compiler,
+            *config.toolchain.cpp_compile_flags,
             str(source_file),
             "-o",
             str(executable),
-            *execution.cpp_link_flags,
+            *config.toolchain.cpp_link_flags,
         ]
-        compile_result = _run_compile(command, workdir, execution.compile_timeout_seconds)
+        compile_result = _run_compile(command, workdir, config.compile_timeout)
         return PreparedProgram(
             language=self.language,
             workdir=workdir,
@@ -87,55 +96,6 @@ class CppHarness(BaseHarness):
             source_file=source_file,
             compile_result=compile_result,
         )
-
-
-class JavaHarness(BaseHarness):
-    language = "java"
-
-    CLASS_PATTERN = re.compile(r"\b(?:public\s+)?class\s+([A-Za-z_][A-Za-z0-9_]*)")
-    IMPORT_PATTERN = re.compile(r"^\s*import\s+[^;]+;\s*$", re.MULTILINE)
-
-    def prepare(self, task: TaskRecord, code: str, execution: ExecutionConfig) -> PreparedProgram:
-        workdir = self._tempdir(self.language)
-        class_name = self._class_name(code)
-        source_file = workdir / f"{class_name}.java"
-        source_file.write_text(code.rstrip() + "\n", encoding="utf-8")
-
-        main_file = workdir / "Main.java"
-        main_file.write_text(self._main_source(task), encoding="utf-8")
-
-        command = [
-            execution.java_compiler,
-            *execution.java_compile_flags,
-            source_file.name,
-            main_file.name,
-        ]
-        compile_result = _run_compile(command, workdir, execution.compile_timeout_seconds)
-        return PreparedProgram(
-            language=self.language,
-            workdir=workdir,
-            run_command=[execution.java_runtime, *execution.java_runtime_flags, "Main"],
-            source_file=source_file,
-            compile_result=compile_result,
-        )
-
-    @classmethod
-    def _class_name(cls, source: str) -> str:
-        match = cls.CLASS_PATTERN.search(source)
-        if match:
-            return match.group(1)
-        return "Problem"
-
-    @classmethod
-    def _import_prelude(cls, source: str) -> str:
-        imports = cls.IMPORT_PATTERN.findall(source)
-        if not imports:
-            return ""
-        return "\n".join(line.strip() for line in imports) + "\n\n"
-
-    @classmethod
-    def _main_source(cls, task: TaskRecord) -> str:
-        return f"{cls._import_prelude(task.prompt)}{task.test.rstrip()}\n"
 
 
 def _run_compile(command: list[str], cwd: Path, timeout_seconds: int) -> CompileResult:
@@ -167,10 +127,9 @@ def _run_compile(command: list[str], cwd: Path, timeout_seconds: int) -> Compile
 
 
 def get_harness(language: str) -> BaseHarness:
-    if language == "python":
-        return PythonHarness()
     if language == "cpp":
         return CppHarness()
-    if language == "java":
-        return JavaHarness()
-    raise ValueError(f"Unsupported language: {language}")
+    raise NotImplementedError(
+        f"Language harness for {language!r} is not implemented yet. "
+        "Add a dataset mapping and harness implementation for that language."
+    )

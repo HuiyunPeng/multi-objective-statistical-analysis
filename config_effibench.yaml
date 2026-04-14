@@ -1,0 +1,46 @@
+# Point this at your local EffiBench checkout.
+dataset_path: "/tmp/EffiBench/data/dataset.json"
+language: python
+objectives: [runtime, memory, balanced]
+prompt_detail_levels: [minimal, detailed]
+selected_task_ids: []
+max_tasks: 10
+warmup_runs: 2
+num_repetitions: 10
+compile_timeout: 20
+run_timeout: 20
+
+model:
+  name: "gpt-5.4"
+  reasoning_effort: "medium"
+  temperature:
+  max_output_tokens: 16000
+  retries: 3
+  retry_backoff_seconds: 2.0
+  cache_dir: "results/effibench/cache/model_outputs"
+  base_url:
+
+toolchain:
+  python_executable: ".venv-effibench/bin/python"
+  cpp_compiler: "g++"
+  cpp_compile_flags:
+    - "-std=c++17"
+  cpp_link_flags: []
+
+paths:
+  results_dir: "results/effibench"
+  analysis_dir: "results/effibench/analysis"
+  prompts_dir: "prompts/effibench"
+  generated_code_dir: "generated_code/effibench"
+  logs_dir: "logs"
+  raw_responses_dir: "results/effibench/raw_responses"
+  generation_metadata_dir: "results/effibench/generation_metadata"
+  evaluation_dir: "results/effibench/evaluations"
+  baseline_code_dir: "generated_code/effibench/baseline"
+  optimized_code_dir: "generated_code/effibench/optimized"
+  selected_tasks_manifest: "results/effibench/selected_tasks.json"
+  run_manifest: "results/effibench/run_manifest.json"
+  raw_runs_csv: "results/effibench/raw_runs.csv"
+  summary_csv: "results/effibench/analysis_ready.csv"
+
+overwrite_existing: false

@@ -5,22 +5,23 @@ from typing import Any, Literal
 
 Language = Literal["python", "cpp", "java"]
 ObjectiveMode = Literal["runtime", "memory", "balanced"]
+PromptDetailLevel = Literal["minimal", "detailed"]
 
 
 @dataclass(frozen=True)
 class TaskRecord:
-    problem_id: str
     task_id: str
     language: Language
-    prompt: str
-    declaration: str
-    canonical_solution: str
-    test: str
-    example_test: str
+    entry_point: str
+    function_code: str
+    test_code: str
+    stress_test: str | None = None
+    cpp_stress_test: str | None = None
+    performance_test_code: str | None = None
 
     @property
     def baseline_source(self) -> str:
-        return f"{self.prompt}{self.canonical_solution}"
+        return self.function_code
 
     def to_dict(self) -> dict[str, Any]:
         return asdict(self)
@@ -28,10 +29,10 @@ class TaskRecord:
 
 @dataclass(frozen=True)
 class GenerationRecord:
-    problem_id: str
     task_id: str
     language: Language
     objective: ObjectiveMode
+    prompt_detail: PromptDetailLevel
     prompt_path: str
     raw_text_path: str
     raw_json_path: str
@@ -49,7 +50,7 @@ class GenerationRecord:
 @dataclass(frozen=True)
 class BenchmarkSample:
     repetition_index: int
-    runtime_seconds: float
+    runtime_milliseconds: float
     peak_memory_bytes: int
     returncode: int
     stdout: str
@@ -61,11 +62,11 @@ class BenchmarkSample:
 
 @dataclass
 class BenchmarkResult:
-    problem_id: str
     task_id: str
     language: Language
     variant: str
     objective: str | None
+    prompt_detail: str | None
     source_path: str
     correctness_pass: bool
     compile_error: bool
@@ -77,8 +78,8 @@ class BenchmarkResult:
     correctness_stdout: str = ""
     correctness_stderr: str = ""
     correctness_returncode: int | None = None
-    runtime_mean: float | None = None
-    runtime_std: float | None = None
+    runtime_mean_ms: float | None = None
+    runtime_std_ms: float | None = None
     runtime_cv: float | None = None
     memory_mean: float | None = None
     memory_std: float | None = None

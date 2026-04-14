@@ -10,15 +10,17 @@ SRC_ROOT = REPO_ROOT / "src"
 if str(SRC_ROOT) not in sys.path:
     sys.path.insert(0, str(SRC_ROOT))
 
-from humaneval_pipeline.pipeline import STAGE_NAMES, run_pipeline
+from humaneval_pipeline.effibench_pipeline import STAGE_NAMES, run_effibench_pipeline
 
 
 def parse_args() -> argparse.Namespace:
-    parser = argparse.ArgumentParser(description="Run the local benchmark optimization pipeline.")
+    parser = argparse.ArgumentParser(
+        description="Run the EffiBench optimization pipeline with the official evaluator."
+    )
     parser.add_argument(
         "--config",
-        default=str(REPO_ROOT / "config.yaml"),
-        help="Path to config YAML.",
+        default=str(REPO_ROOT / "config_effibench.yaml"),
+        help="Path to EffiBench config YAML.",
     )
     parser.add_argument(
         "--stages",
@@ -31,7 +33,7 @@ def parse_args() -> argparse.Namespace:
 def main() -> None:
     args = parse_args()
     stages = [stage.strip() for stage in args.stages.split(",") if stage.strip()]
-    run_pipeline(args.config, stages)
+    run_effibench_pipeline(args.config, stages)
 
 
 if __name__ == "__main__":

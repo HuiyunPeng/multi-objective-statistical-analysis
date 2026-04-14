@@ -14,7 +14,7 @@ from humaneval_pipeline.analysis import run_analysis
 
 
 def parse_args() -> argparse.Namespace:
-    parser = argparse.ArgumentParser(description="Analyze HumanEval-X DOE results.")
+    parser = argparse.ArgumentParser(description="Analyze local benchmark DOE results.")
     parser.add_argument(
         "--config",
         default=str(REPO_ROOT / "config.yaml"),

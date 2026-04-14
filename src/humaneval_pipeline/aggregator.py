@@ -5,31 +5,38 @@ from typing import Any, Iterable
 
 from .artifact_paths import evaluation_path, generation_metadata_path
 from .config import ExperimentConfig
-from .models import ObjectiveMode, TaskRecord
+from .models import TaskRecord
 from .utils import make_relative, read_json, write_csv
-
-OBJECTIVES: tuple[ObjectiveMode, ...] = ("runtime", "memory", "balanced")
 
 
 def write_aggregated_results(
     config: ExperimentConfig,
-    aligned_tasks: dict[str, dict[str, TaskRecord]],
+    tasks: list[TaskRecord],
 ) -> tuple[Path, Path]:
     root = config.project_root
     raw_rows: list[dict[str, Any]] = []
     summary_rows: list[dict[str, Any]] = []
 
-    for language, task_map in aligned_tasks.items():
-        for problem_id, task in task_map.items():
-            before_result = read_json(evaluation_path(config, "baseline", problem_id, language))
-            raw_rows.extend(_measurement_rows(before_result, root))
+    for task in tasks:
+        before_result = read_json(evaluation_path(config, "baseline", task.task_id, task.language))
+        raw_rows.extend(_measurement_rows(before_result, root))
 
-            for objective in OBJECTIVES:
+        for objective in config.objectives:
+            for prompt_detail in config.prompt_detail_levels:
                 after_result = read_json(
-                    evaluation_path(config, "optimized", problem_id, language, objective)
+                    evaluation_path(
+                        config,
+                        "optimized",
+                        task.task_id,
+                        task.language,
+                        objective,
+                        prompt_detail,
+                    )
                 )
                 generation_record = read_json(
-                    generation_metadata_path(config, problem_id, language, objective)
+                    generation_metadata_path(
+                        config, task.task_id, task.language, objective, prompt_detail
+                    )
                 )
                 raw_rows.extend(_measurement_rows(after_result, root))
                 summary_rows.append(
@@ -37,6 +44,7 @@ def write_aggregated_results(
                         config=config,
                         task=task,
                         objective=objective,
+                        prompt_detail=prompt_detail,
                         before_result=before_result,
                         after_result=after_result,
                         generation_record=generation_record,
@@ -53,13 +61,13 @@ def write_aggregated_results(
 def _measurement_rows(result: dict[str, Any], root: Path) -> Iterable[dict[str, Any]]:
     for sample in result.get("samples", []):
         yield {
-            "problem_id": result["problem_id"],
             "task_id": result["task_id"],
             "language": result["language"],
             "objective": result.get("objective") or "",
+            "prompt_detail": result.get("prompt_detail") or "",
             "variant": result["variant"],
             "repetition_index": sample["repetition_index"],
-            "runtime_seconds": sample["runtime_seconds"],
+            "runtime_milliseconds": sample["runtime_milliseconds"],
             "peak_memory_bytes": sample["peak_memory_bytes"],
             "returncode": sample["returncode"],
             "stdout": sample["stdout"],
@@ -76,27 +84,30 @@ def _summary_row(
     config: ExperimentConfig,
     task: TaskRecord,
     objective: str,
+    prompt_detail: str,
     before_result: dict[str, Any],
     after_result: dict[str, Any],
     generation_record: dict[str, Any],
 ) -> dict[str, Any]:
-    runtime_before_mean = before_result.get("runtime_mean")
-    runtime_after_mean = after_result.get("runtime_mean")
+    runtime_before_mean_ms = before_result.get("runtime_mean_ms")
+    runtime_after_mean_ms = after_result.get("runtime_mean_ms")
     memory_before_mean = before_result.get("memory_mean")
     memory_after_mean = after_result.get("memory_mean")
 
     return {
-        "problem_id": task.problem_id,
         "task_id": task.task_id,
         "language": task.language,
         "objective": objective,
+        "prompt_detail": prompt_detail,
         "correctness_before": int(bool(before_result.get("correctness_pass"))),
         "correctness_after": int(bool(after_result.get("correctness_pass"))),
-        "runtime_before_mean": runtime_before_mean,
-        "runtime_after_mean": runtime_after_mean,
+        "runtime_before_mean_ms": runtime_before_mean_ms,
+        "runtime_after_mean_ms": runtime_after_mean_ms,
         "memory_before_mean": memory_before_mean,
         "memory_after_mean": memory_after_mean,
-        "runtime_improvement_ratio": _improvement_ratio(runtime_before_mean, runtime_after_mean),
+        "runtime_improvement_ratio": _improvement_ratio(
+            runtime_before_mean_ms, runtime_after_mean_ms
+        ),
         "memory_improvement_ratio": _improvement_ratio(memory_before_mean, memory_after_mean),
         "compile_error": int(
             bool(before_result.get("compile_error")) or bool(after_result.get("compile_error"))
@@ -111,8 +122,8 @@ def _summary_row(
         "test_error_after": int(bool(after_result.get("test_error"))),
         "timeout_before": int(bool(before_result.get("timeout"))),
         "timeout_after": int(bool(after_result.get("timeout"))),
-        "runtime_before_std": before_result.get("runtime_std"),
-        "runtime_after_std": after_result.get("runtime_std"),
+        "runtime_before_std_ms": before_result.get("runtime_std_ms"),
+        "runtime_after_std_ms": after_result.get("runtime_std_ms"),
         "runtime_before_cv": before_result.get("runtime_cv"),
         "runtime_after_cv": after_result.get("runtime_cv"),
         "memory_before_std": before_result.get("memory_std"),
@@ -137,13 +148,13 @@ def _improvement_ratio(before_value: float | None, after_value: float | None) ->
 
 
 RAW_FIELDNAMES = [
-    "problem_id",
     "task_id",
     "language",
     "objective",
+    "prompt_detail",
     "variant",
     "repetition_index",
-    "runtime_seconds",
+    "runtime_milliseconds",
     "peak_memory_bytes",
     "returncode",
     "stdout",
@@ -156,14 +167,14 @@ RAW_FIELDNAMES = [
 ]
 
 SUMMARY_FIELDNAMES = [
-    "problem_id",
     "task_id",
     "language",
     "objective",
+    "prompt_detail",
     "correctness_before",
     "correctness_after",
-    "runtime_before_mean",
-    "runtime_after_mean",
+    "runtime_before_mean_ms",
+    "runtime_after_mean_ms",
     "memory_before_mean",
     "memory_after_mean",
     "runtime_improvement_ratio",
@@ -177,8 +188,8 @@ SUMMARY_FIELDNAMES = [
     "test_error_after",
     "timeout_before",
     "timeout_after",
-    "runtime_before_std",
-    "runtime_after_std",
+    "runtime_before_std_ms",
+    "runtime_after_std_ms",
     "runtime_before_cv",
     "runtime_after_cv",
     "memory_before_std",

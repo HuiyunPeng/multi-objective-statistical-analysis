@@ -10,14 +10,7 @@ SRC_ROOT = REPO_ROOT / "src"
 if str(SRC_ROOT) not in sys.path:
     sys.path.insert(0, str(SRC_ROOT))
 
-from humaneval_pipeline.config import (
-    BenchmarkConfig,
-    DatasetConfig,
-    ExecutionConfig,
-    ExperimentConfig,
-    ModelConfig,
-    PathsConfig,
-)
+from humaneval_pipeline.config import ExperimentConfig, ModelConfig, PathsConfig
 from humaneval_pipeline.model_client import OpenAIModelClient
 
 
@@ -25,10 +18,8 @@ class ModelClientTests(unittest.TestCase):
     def test_cache_key_is_deterministic(self) -> None:
         with tempfile.TemporaryDirectory() as tmpdir:
             config = ExperimentConfig(
-                dataset=DatasetConfig(source_urls=["https://example.com/{language}.jsonl"]),
+                dataset_path="benchmark/human_eval_cpp.json",
                 model=ModelConfig(cache_dir="cache/model"),
-                benchmark=BenchmarkConfig(),
-                execution=ExecutionConfig(),
                 paths=PathsConfig(),
                 project_root=Path(tmpdir),
             )
@@ -42,10 +33,8 @@ class ModelClientTests(unittest.TestCase):
             root = Path(tmpdir)
             (root / ".env").write_text("OPENAI_API_KEY=test-from-dotenv\n", encoding="utf-8")
             config = ExperimentConfig(
-                dataset=DatasetConfig(source_urls=["https://example.com/{language}.jsonl"]),
+                dataset_path="benchmark/human_eval_cpp.json",
                 model=ModelConfig(cache_dir="cache/model"),
-                benchmark=BenchmarkConfig(),
-                execution=ExecutionConfig(),
                 paths=PathsConfig(),
                 project_root=root,
             )
@@ -56,10 +45,8 @@ class ModelClientTests(unittest.TestCase):
     def test_gpt5_request_omits_temperature(self) -> None:
         with tempfile.TemporaryDirectory() as tmpdir:
             config = ExperimentConfig(
-                dataset=DatasetConfig(source_urls=["https://example.com/{language}.jsonl"]),
+                dataset_path="benchmark/human_eval_cpp.json",
                 model=ModelConfig(name="gpt-5.4", temperature=0, cache_dir="cache/model"),
-                benchmark=BenchmarkConfig(),
-                execution=ExecutionConfig(),
                 paths=PathsConfig(),
                 project_root=Path(tmpdir),
             )
@@ -71,10 +58,8 @@ class ModelClientTests(unittest.TestCase):
     def test_non_gpt5_request_keeps_temperature(self) -> None:
         with tempfile.TemporaryDirectory() as tmpdir:
             config = ExperimentConfig(
-                dataset=DatasetConfig(source_urls=["https://example.com/{language}.jsonl"]),
+                dataset_path="benchmark/human_eval_cpp.json",
                 model=ModelConfig(name="gpt-4.1", temperature=0, cache_dir="cache/model"),
-                benchmark=BenchmarkConfig(),
-                execution=ExecutionConfig(),
                 paths=PathsConfig(),
                 project_root=Path(tmpdir),
             )

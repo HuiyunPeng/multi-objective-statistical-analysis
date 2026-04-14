@@ -13,12 +13,17 @@ LANGUAGE_FENCE_ALIASES = {
 }
 
 
-def clean_model_response(raw_text: str, declaration: str, language: str) -> CleanedCodeResult:
+def clean_model_response(
+    raw_text: str,
+    function_code: str,
+    entry_point: str,
+    language: str,
+) -> CleanedCodeResult:
     notes: list[str] = []
     cleaned = _extract_code_block(raw_text, language, notes)
-    signature_valid = _validate_signature(cleaned, declaration, language, notes)
+    signature_valid = _validate_signature(cleaned, function_code, entry_point, language, notes)
     if not signature_valid:
-        notes.append("Expected declaration was not found in cleaned code.")
+        notes.append("Expected callable signature was not found in cleaned code.")
     return CleanedCodeResult(cleaned_code=cleaned.strip() + "\n", signature_valid=signature_valid, notes=notes)
 
 
@@ -44,49 +49,87 @@ def _extract_code_block(raw_text: str, language: str, notes: list[str]) -> str:
     return preferred_block.group(2).strip()
 
 
-def _validate_signature(code: str, declaration: str, language: str, notes: list[str]) -> bool:
-    expected_signature = _extract_expected_signature(declaration, language)
-    if expected_signature is None:
-        notes.append("Could not isolate callable signature; falling back to full declaration match.")
-        expected_signature = declaration
-    else:
-        notes.append(f"Validating callable signature: {expected_signature}")
-
-    normalized_code = _normalize_for_signature_match(code)
-    normalized_signature = _normalize_for_signature_match(expected_signature)
-    return normalized_signature in normalized_code
-
-
-def _extract_expected_signature(declaration: str, language: str) -> str | None:
-    non_empty_lines = [line.rstrip() for line in declaration.splitlines() if line.strip()]
-    if not non_empty_lines:
-        return None
-
-    if language == "python":
-        for line in non_empty_lines:
-            stripped = line.strip()
-            if stripped.startswith("def "):
-                return stripped
-        return None
-
-    if language == "java":
-        for line in non_empty_lines:
-            stripped = line.strip()
-            if "(" in stripped and stripped.endswith("{") and not stripped.startswith("class "):
-                return stripped
-        return None
-
+def _validate_signature(
+    code: str,
+    function_code: str,
+    entry_point: str,
+    language: str,
+    notes: list[str],
+) -> bool:
     if language == "cpp":
-        for line in reversed(non_empty_lines):
+        return _validate_cpp_signature(code, function_code, entry_point, notes)
+
+    expected_signature = _extract_signature(function_code, entry_point, language)
+    actual_signature = _extract_signature(code, entry_point, language)
+    if expected_signature and actual_signature:
+        notes.append(f"Validating callable signature: {expected_signature}")
+        return _normalize_signature(expected_signature) == _normalize_signature(actual_signature)
+
+    notes.append("Falling back to entry-point presence validation.")
+    return f"{entry_point}(" in code
+
+
+def _validate_cpp_signature(
+    code: str,
+    function_code: str,
+    entry_point: str,
+    notes: list[str],
+) -> bool:
+    expected_signature = _extract_signature(function_code, entry_point, "cpp")
+    actual_signature = _extract_signature(code, entry_point, "cpp")
+    if expected_signature and actual_signature:
+        notes.append(f"Validating callable signature: {expected_signature}")
+        return _normalize_cpp_signature(expected_signature) == _normalize_cpp_signature(actual_signature)
+
+    notes.append("Could not isolate a full C++ signature; falling back to entry-point presence.")
+    return f"{entry_point}(" in code
+
+
+def _extract_signature(source: str, entry_point: str, language: str) -> str | None:
+    if language == "python":
+        for line in source.splitlines():
             stripped = line.strip()
-            if "(" in stripped and stripped.endswith("{"):
+            if stripped.startswith(f"def {entry_point}("):
                 return stripped
         return None
 
-    return non_empty_lines[-1].strip()
+    lines = source.splitlines()
+    for index, line in enumerate(lines):
+        stripped = line.strip()
+        if f"{entry_point}(" not in stripped:
+            continue
+        if language == "java" and stripped.startswith("class "):
+            continue
+        collected = [stripped]
+        if _signature_complete(stripped, language):
+            return stripped
+        for next_line in lines[index + 1 :]:
+            next_stripped = next_line.strip()
+            if not next_stripped:
+                continue
+            collected.append(next_stripped)
+            candidate = " ".join(collected)
+            if _signature_complete(candidate, language):
+                return candidate
+        break
+    return None
 
 
-def _normalize_for_signature_match(text: str) -> str:
+def _signature_complete(signature: str, language: str) -> bool:
+    if language == "python":
+        return signature.endswith(":")
+    return "{" in signature or signature.endswith(";")
+
+
+def _normalize_signature(text: str) -> str:
     normalized = re.sub(r"\s+", "", text)
-    normalized = normalized.replace("std::", "")
-    return normalized
+    return normalized.replace("std::", "")
+
+
+def _normalize_cpp_signature(text: str) -> str:
+    match = re.search(r"([A-Za-z_][A-Za-z0-9_]*)\s*\((.*)\)", text)
+    if not match:
+        return _normalize_signature(text)
+    name = match.group(1)
+    params = match.group(2)
+    return _normalize_signature(f"{name}({params})")

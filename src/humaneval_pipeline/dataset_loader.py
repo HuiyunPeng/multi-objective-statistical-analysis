@@ -1,154 +1,110 @@
 from __future__ import annotations
 
-import gzip
 import json
 import logging
 from pathlib import Path
 from typing import Any
 
-import requests
-
 from .config import ExperimentConfig
-from .models import Language, TaskRecord
-from .utils import ensure_parent, write_json
+from .models import TaskRecord
+from .utils import write_json
 
 
-class HumanEvalXLoader:
-    REQUIRED_FIELDS = (
-        "task_id",
-        "prompt",
-        "declaration",
-        "canonical_solution",
-        "test",
-        "example_test",
-    )
+class BenchmarkDatasetLoader:
+    REQUIRED_FIELDS = ("task_id", "entry_point", "function_code", "test_code")
 
     def __init__(self, config: ExperimentConfig, logger: logging.Logger) -> None:
         self.config = config
         self.logger = logger
 
-    def load_aligned_tasks(self) -> dict[str, dict[str, TaskRecord]]:
-        by_language = {
-            language: self._load_language(language) for language in self.config.dataset.languages
-        }
-        common_problem_ids = set.intersection(
-            *(set(records.keys()) for records in by_language.values())
+    def load_tasks(self) -> list[TaskRecord]:
+        dataset_path = self.config.resolve_path(self.config.dataset_path)
+        if not dataset_path.exists():
+            raise FileNotFoundError(f"Dataset file does not exist: {dataset_path}")
+
+        payload = json.loads(dataset_path.read_text(encoding="utf-8"))
+        if not isinstance(payload, list):
+            raise ValueError("Dataset file must contain a JSON array of task objects.")
+
+        all_tasks = [self._build_task_record(row) for row in payload]
+        selected = self._select_tasks(all_tasks)
+        self.logger.info(
+            "Loaded %s %s benchmark tasks from %s",
+            len(selected),
+            self.config.language,
+            dataset_path,
         )
-        if not common_problem_ids:
-            raise RuntimeError("No common HumanEval-X problem IDs were found across languages.")
+        return selected
 
-        selected_problem_ids = self._select_problem_ids(common_problem_ids)
-        aligned: dict[str, dict[str, TaskRecord]] = {}
-        for language, records in by_language.items():
-            aligned[language] = {
-                problem_id: records[problem_id] for problem_id in selected_problem_ids
-            }
-        return aligned
-
-    def save_selected_manifest(self, aligned_tasks: dict[str, dict[str, TaskRecord]]) -> None:
+    def save_selected_manifest(self, tasks: list[TaskRecord]) -> None:
         payload: dict[str, Any] = {
-            "languages": self.config.dataset.languages,
-            "selected_problem_ids": list(next(iter(aligned_tasks.values())).keys()),
-            "tasks": {
-                language: [task.to_dict() for task in tasks.values()]
-                for language, tasks in aligned_tasks.items()
-            },
+            "language": self.config.language,
+            "dataset_path": self.config.dataset_path,
+            "selected_task_ids": [task.task_id for task in tasks],
+            "max_tasks": self.config.max_tasks,
+            "tasks": [task.to_dict() for task in tasks],
         }
         write_json(self.config.resolve_path(self.config.paths.selected_tasks_manifest), payload)
 
-    def _load_language(self, language: str) -> dict[str, TaskRecord]:
-        path = self._ensure_dataset_file(language)
-        rows = self._read_jsonl(path)
-        records: dict[str, TaskRecord] = {}
-        for row in rows:
-            missing_fields = [field for field in self.REQUIRED_FIELDS if field not in row]
-            if missing_fields:
-                raise KeyError(
-                    f"Dataset row for {language} is missing fields {missing_fields}. "
-                    f"Available fields: {sorted(row.keys())}"
-                )
+    def _build_task_record(self, row: Any) -> TaskRecord:
+        if not isinstance(row, dict):
+            raise ValueError(f"Dataset row must be an object, got {type(row).__name__}.")
 
-            task_id = str(row["task_id"])
-            problem_id = self.normalize_problem_id(task_id)
-            records[problem_id] = TaskRecord(
-                problem_id=problem_id,
-                task_id=task_id,
-                language=language,  # type: ignore[arg-type]
-                prompt=str(row["prompt"]),
-                declaration=str(row["declaration"]),
-                canonical_solution=str(row["canonical_solution"]),
-                test=str(row["test"]),
-                example_test=str(row["example_test"]),
+        missing_fields = [field for field in self.REQUIRED_FIELDS if field not in row]
+        if missing_fields:
+            raise KeyError(
+                f"Dataset row is missing fields {missing_fields}. "
+                f"Available fields: {sorted(row.keys())}"
             )
-        self.logger.info("Loaded %s HumanEval-X tasks for %s", len(records), language)
-        return records
 
-    def _ensure_dataset_file(self, language: str) -> Path:
-        local_file = self.config.dataset.local_files.get(language)
-        if local_file:
-            local_path = self.config.resolve_path(local_file)
-            if not local_path.exists():
-                raise FileNotFoundError(f"Configured local dataset file does not exist: {local_path}")
-            return local_path
+        performance_test_code = self._resolve_performance_test_code(row)
+        return TaskRecord(
+            task_id=str(row["task_id"]),
+            language=self.config.language,  # type: ignore[arg-type]
+            entry_point=str(row["entry_point"]),
+            function_code=str(row["function_code"]),
+            test_code=str(row["test_code"]),
+            stress_test=self._maybe_string(row.get("stress_test")),
+            cpp_stress_test=self._maybe_string(row.get("cpp_stress_test")),
+            performance_test_code=performance_test_code,
+        )
 
-        cache_path = self.config.resolve_path(self.config.dataset.cache_dir) / f"{language}.jsonl"
-        if cache_path.exists():
-            return cache_path
+    def _resolve_performance_test_code(self, row: dict[str, Any]) -> str:
+        if self.config.language == "cpp":
+            cpp_stress_test = self._maybe_string(row.get("cpp_stress_test"))
+            if cpp_stress_test:
+                return cpp_stress_test
 
-        last_error: Exception | None = None
-        for url_template in self.config.dataset.source_urls:
-            url = url_template.format(language=language)
-            try:
-                self.logger.info("Downloading HumanEval-X %s from %s", language, url)
-                response = requests.get(url, timeout=60)
-                response.raise_for_status()
-                content = response.content
-                if content[:2] == b"\x1f\x8b":
-                    text = gzip.decompress(content).decode("utf-8")
-                else:
-                    text = response.text
-                ensure_parent(cache_path)
-                cache_path.write_text(text, encoding="utf-8")
-                return cache_path
-            except Exception as exc:  # noqa: BLE001
-                last_error = exc
-                self.logger.warning("Failed to download %s from %s: %s", language, url, exc)
+        generic_stress_test = self._maybe_string(row.get("stress_test"))
+        if generic_stress_test:
+            return generic_stress_test
 
-        raise RuntimeError(f"Unable to download HumanEval-X data for {language}") from last_error
+        task_id = row.get("task_id", "<unknown>")
+        raise KeyError(f"Task {task_id} is missing a usable performance stress test field.")
 
-    @staticmethod
-    def normalize_problem_id(task_id: str) -> str:
-        if "/" in task_id:
-            return task_id.split("/", 1)[1]
-        return task_id
+    def _select_tasks(self, tasks: list[TaskRecord]) -> list[TaskRecord]:
+        sorted_tasks = sorted(tasks, key=lambda task: self._sort_key(task.task_id))
 
-    def _select_problem_ids(self, common_problem_ids: set[str]) -> list[str]:
-        if self.config.dataset.selected_problem_ids:
-            selected = [str(problem_id) for problem_id in self.config.dataset.selected_problem_ids]
-            missing = sorted(set(selected) - common_problem_ids)
-            if missing:
-                raise ValueError(
-                    "Selected problem IDs are not present in all configured languages: "
-                    + ", ".join(missing)
-                )
-            return selected
+        if not self.config.selected_task_ids:
+            if self.config.max_tasks is None:
+                return sorted_tasks
+            return sorted_tasks[: self.config.max_tasks]
 
-        sorted_ids = sorted(common_problem_ids, key=self._sort_key)
-        return sorted_ids[: self.config.dataset.pilot_size]
+        selected_ids = {str(task_id) for task_id in self.config.selected_task_ids}
+        filtered = [task for task in sorted_tasks if task.task_id in selected_ids]
+        missing_ids = sorted(selected_ids - {task.task_id for task in filtered}, key=self._sort_key)
+        if missing_ids:
+            raise ValueError(f"Selected task IDs not found in dataset: {missing_ids}")
+        return filtered
 
     @staticmethod
-    def _sort_key(problem_id: str) -> tuple[int, str]:
-        if problem_id.isdigit():
-            return (0, f"{int(problem_id):08d}")
-        return (1, problem_id)
+    def _sort_key(task_id: str) -> tuple[int, str]:
+        if task_id.isdigit():
+            return (0, f"{int(task_id):08d}")
+        return (1, task_id)
 
     @staticmethod
-    def _read_jsonl(path: Path) -> list[dict[str, Any]]:
-        rows: list[dict[str, Any]] = []
-        with path.open("r", encoding="utf-8") as handle:
-            for line in handle:
-                line = line.strip()
-                if not line:
-                    continue
-                rows.append(json.loads(line))
-        return rows
+    def _maybe_string(value: Any) -> str | None:
+        if value is None:
+            return None
+        return str(value)

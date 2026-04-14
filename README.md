@@ -1,33 +1,46 @@
-# HumanEval-X Prompt-Objective DOE Pipeline
+# C++-First Objective × Prompt-Detail DOE Pipeline
 
-This project builds a reproducible command-line experiment pipeline for testing how prompt objective framing affects LLM-based code optimization on HumanEval-X across `python`, `cpp`, and `java`.
+This project runs a reproducible code-optimization experiment over a local benchmark dataset. The default pipeline is centered on C++ and the local file `benchmark/human_eval_cpp.json`.
 
-The pipeline:
+The main factorial design is:
 
-- downloads or loads HumanEval-X for the configured languages
-- aligns common `problem_id` values across languages
-- uses `prompt + canonical_solution` as the runnable baseline
-- generates `runtime`, `memory`, and `balanced` optimization prompts
-- calls `gpt-5.4` once per `problem_id × language × objective`
-- caches model outputs so reruns do not regenerate completed cases
-- runs correctness and benchmark measurements before/after optimization
+- `objective ∈ {runtime, memory, balanced}`
+- `prompt_detail ∈ {minimal, detailed}`
+
+`language` is now a configuration/block field rather than a main treatment factor. The default active language is `cpp`.
+
+## What The Pipeline Does
+
+- loads a local benchmark JSON file for the selected language
+- uses each task's `function_code` as the baseline code to optimize
+- generates six prompt variants from `objective × prompt_detail`
+- saves every prompt, raw response, and cleaned code artifact to disk
+- validates correctness with `test_code`
+- benchmarks C++ performance with `cpp_stress_test`
+- measures repeated runtime and memory usage before and after optimization
 - writes raw and summary CSV outputs
-- fits blocked factorial models with `problem_id` as a fixed-effect block
+- fits blocked analysis models over `objective`, `prompt_detail`, and their interaction
 
-## Project Structure
+## Dataset Format
 
-```text
-README.md
-requirements.txt
-config.yaml
-scripts/
-src/
-tests/
-results/
-prompts/
-generated_code/
-logs/
-```
+The default dataset is `benchmark/human_eval_cpp.json`.
+
+Each task is expected to contain fields such as:
+
+- `task_id`
+- `entry_point`
+- `function_code`
+- `test_code`
+- `stress_test`
+- `cpp_stress_test`
+
+Field usage in the current C++ pipeline:
+
+- `function_code`: original code to optimize
+- `test_code`: correctness harness
+- `cpp_stress_test`: C++ performance harness
+- `stress_test`: retained in the data model for future language support, but not preferred for C++ when `cpp_stress_test` exists
+- `entry_point`: used during response cleaning / signature validation
 
 ## Setup
 
@@ -45,43 +58,39 @@ pip install -r requirements.txt
 echo "OPENAI_API_KEY=your_key_here" > .env
 ```
 
-The pipeline reads `OPENAI_API_KEY` from `.env` first and falls back to the current shell environment if needed.
-
-3. Confirm local toolchains are available:
+3. Confirm the local C++ toolchain is available:
 
 ```bash
 python3 --version
 g++ --version
-javac -version
-java -version
 ```
-
-## HumanEval-X Notes
-
-HumanEval-X field names differ from a simpler “problem/prompt/tests” assumption in a few important ways:
-
-- `task_id` is language-prefixed, such as `Python/0`, `CPP/0`, and `Java/0`; this pipeline normalizes the shared suffix into `problem_id`
-- `prompt` is not a full runnable solution; it already contains the declaration and docstring/scaffold
-- `declaration` is the signature-only fragment used here for signature validation
-- `canonical_solution` is the baseline solution body appended to `prompt`
-- `test` contains the hidden evaluation harness used here for correctness and measurement
-- `example_test` exists but is retained only for reference/debugging in v1
 
 ## Configuration
 
-Edit [`config.yaml`](/Users/peng397/Desktop/multi-objective-statistical-analysis/config.yaml) to control:
+The main config lives in `config.yaml`. The default shape is:
 
-- selected languages
-- selected problem IDs
-- pilot subset size
-- dataset source URLs or local overrides
-- model settings
-- benchmark repetitions and warmup runs
-- per-language timeout limits
-- compiler/runtime flags
-- output directories
+```yaml
+dataset_path: benchmark/human_eval_cpp.json
+language: cpp
+objectives: [runtime, memory, balanced]
+prompt_detail_levels: [minimal, detailed]
+selected_task_ids: []
+max_tasks:
+warmup_runs: 1
+num_repetitions: 5
+compile_timeout: 20
+run_timeout: 20
+```
 
-If `dataset.selected_problem_ids` is empty, the pipeline chooses the first `pilot_size` common problem IDs across all configured languages.
+Notes:
+
+- `selected_task_ids` is the explicit task list; if you set it, those tasks are used as-is
+- `max_tasks` lets you run the first `N` tasks after sorting by `task_id`; it is only used when `selected_task_ids` is empty
+- leaving both `selected_task_ids` and `max_tasks` empty means "run all tasks in the dataset"
+- `warmup_runs` controls unmeasured benchmark executions before timing/memory samples are collected
+- `num_repetitions` controls how many measured benchmark samples are collected after warmup
+- `language` is currently wired end-to-end for `cpp`
+- the structure is designed so future datasets like `benchmark/human_eval_python.json` can be added with a new harness implementation
 
 ## Running The Pipeline
 
@@ -104,6 +113,36 @@ Run the analysis step:
 python3 scripts/analyze_results.py --config config.yaml
 ```
 
+Run the EffiBench optimization pipeline with GPT-5.4 generation and EffiBench's official
+`mprof`-based evaluator:
+
+```bash
+python3 scripts/run_effibench_pipeline.py --config config_effibench.yaml
+python3 scripts/analyze_results.py --config config_effibench.yaml
+```
+
+Notes for EffiBench:
+
+- `config_effibench.yaml` is a template: set `dataset_path` to your local EffiBench checkout before running
+- the configured Python executable should point to an environment with `memory_profiler` installed so `mprof` is available
+- the EffiBench pipeline writes its own artifacts under `results/effibench/`, `prompts/effibench/`, and `generated_code/effibench/`
+- EffiBench analysis includes the same blocked model used for HumanEval and adds `memory_area_improvement_ratio` when present
+
+Run EffiBench's original `mprof`-based evaluator on an official-format results JSON:
+
+```bash
+python3 scripts/run_effibench_official.py \
+  --effibench-root /path/to/EffiBench \
+  --input-json /path/to/results/gpt-3.5-turbo.json \
+  --python-executable /path/to/python
+```
+
+Notes:
+
+- The selected Python environment must have `memory_profiler` installed so `mprof` is available on `PATH`
+- The input JSON must follow EffiBench's official result format and include fields such as `problem_idx`, `completion`, `canonical_solution`, `small_test_cases`, and `test_case`
+- The script stages the JSON under `EffiBench/results/`, runs `code_efficiency_calculator.py`, and writes a summary JSON under `results/effibench/official_summaries/manual/`
+
 Override the summary CSV or analysis output directory:
 
 ```bash
@@ -113,129 +152,73 @@ python3 scripts/analyze_results.py \
   --output-dir results/analysis
 ```
 
-## Outputs
+## Artifact Layout
 
-Key artifacts:
+Key outputs:
 
-- `results/selected_tasks.json`: selected aligned HumanEval-X tasks
+- `results/selected_tasks.json`: selected task manifest for the active language
 - `results/run_manifest.json`: local environment and toolchain versions
-- `prompts/<objective>/<language>/<problem_id>.txt`: saved prompts
-- `results/raw_responses/<objective>/<language>/<problem_id>.txt`: raw response text
-- `results/raw_responses/<objective>/<language>/<problem_id>.json`: raw API response JSON
-- `generated_code/baseline/<language>/<problem_id>.<ext>`: baseline source
-- `generated_code/optimized/<objective>/<language>/<problem_id>.<ext>`: cleaned optimized code
-- `results/evaluations/...`: per-case JSON evaluation records
+- `prompts/<objective>/<prompt_detail>/<language>/<task_id>.txt`: saved prompts
+- `results/raw_responses/<objective>/<prompt_detail>/<language>/<task_id>.txt`: raw response text
+- `results/raw_responses/<objective>/<prompt_detail>/<language>/<task_id>.json`: raw API response JSON
+- `generated_code/baseline/<language>/<task_id>.<ext>`: baseline source
+- `generated_code/optimized/<objective>/<prompt_detail>/<language>/<task_id>.<ext>`: cleaned optimized code
+- `results/evaluations/...`: per-case evaluation JSON records
 - `results/raw_runs.csv`: raw measured repetitions
 - `results/analysis_ready.csv`: analysis-ready summary table
 - `results/analysis/`: ANOVA tables, model summaries, correctness tables, and plots
+- `results/analysis/secondary_ge_5pct/`: secondary ANOVA tables and plots restricted to `improvement_ratio >= 1.05`
 
-## CSV Schema
+## Output Columns
 
-### `results/raw_runs.csv`
+`results/analysis_ready.csv` contains one row per `task_id × objective × prompt_detail` and includes columns such as:
 
-One row per measured repetition.
-
-```text
-problem_id
-task_id
-language
-objective
-variant
-repetition_index
-runtime_seconds
-peak_memory_bytes
-returncode
-stdout
-stderr
-correctness_pass
-compile_error
-test_error
-timeout
-source_path
-```
-
-### `results/analysis_ready.csv`
-
-One row per `problem_id × language × objective`.
-
-```text
-problem_id
-task_id
-language
-objective
-correctness_before
-correctness_after
-runtime_before_mean
-runtime_after_mean
-memory_before_mean
-memory_after_mean
-runtime_improvement_ratio
-memory_improvement_ratio
-compile_error
-test_error
-timeout
-compile_error_before
-compile_error_after
-test_error_before
-test_error_after
-timeout_before
-timeout_after
-runtime_before_std
-runtime_after_std
-runtime_before_cv
-runtime_after_cv
-memory_before_std
-memory_after_std
-memory_before_cv
-memory_after_cv
-baseline_code_path
-raw_response_path
-raw_response_json_path
-cleaned_code_path
-prompt_path
-signature_valid
-model_name
-from_cache
-```
+- `task_id`
+- `language`
+- `objective`
+- `prompt_detail`
+- `correctness_before`
+- `correctness_after`
+- `runtime_before_mean_ms`
+- `runtime_after_mean_ms`
+- `memory_before_mean`
+- `memory_after_mean`
+- `runtime_improvement_ratio`
+- `memory_improvement_ratio`
+- `compile_error`
+- `test_error`
+- `timeout`
+- `prompt_path`
+- `raw_response_path`
+- `cleaned_code_path`
 
 Improvement ratios are defined as `before / after`, so values greater than `1` indicate improvement.
+The analysis step also writes a secondary filtered analysis under `results/analysis/secondary_ge_5pct/`
+that keeps only correct complete cases with metric-specific `improvement_ratio >= 1.05`.
 
-## Statistical Analysis
+## Analysis Model
 
-The analysis script fits two blocked fixed-effect models on complete cases:
+For cpp-only runs, the analysis uses blocked fixed-effect models of the form:
 
-- `runtime_improvement_ratio ~ C(problem_id, Sum) + C(objective, Sum) * C(language, Sum)`
-- `memory_improvement_ratio ~ C(problem_id, Sum) + C(objective, Sum) * C(language, Sum)`
+- `response ~ C(block_id, Sum) + C(objective, Sum) * C(prompt_detail, Sum)`
 
-It also writes:
+When multiple languages appear in the summary CSV later, the analysis will attempt to add:
 
-- Type III ANOVA tables
-- OLS model summaries
-- interaction plots for runtime and memory improvement ratios
-- correctness-rate tables and plots by `objective × language`
+- `+ C(language, Sum)`
 
-## Language-Specific Manual Adjustment Notes
+while still keeping language out of the main treatment interaction.
 
-- Python: the local interpreter version may differ from the HumanEval-X reference environment; the pipeline records the actual version in `results/run_manifest.json`
-- C++: some tasks may require different compile or link flags on different systems; adjust `execution.cpp_compile_flags` and `execution.cpp_link_flags` in `config.yaml` if needed
-- Java: top-level class names are parsed from the generated source and used as the filename; if a task requires special JVM/compiler flags, edit `execution.java_compile_flags` and `execution.java_runtime_flags`
-- Java assertions are enabled by default with `-ea` because HumanEval-style tests commonly rely on `assert`
-- Runtime and memory measurement use the provided HumanEval-X `test` harness as the workload; if you later want larger stress workloads, that requires task-specific extensions beyond v1
+## Manual Adjustment Notes
 
-## Testing
+- C++ performance measurement currently prefers `cpp_stress_test`; adjust your dataset if a task needs a different benchmark harness
+- Some tasks may require different compiler or link flags; adjust `toolchain.cpp_compile_flags` or `toolchain.cpp_link_flags` in `config.yaml`
+- Analysis dependencies may need manual version alignment. The current environment showed a NumPy/SciPy/statsmodels compatibility issue, so you may need to reinstall those packages together before running `scripts/analyze_results.py`
 
-Run the test suite:
+## Extension Path
 
-```bash
-python3 -m unittest discover -s tests
-```
+The refactor is intentionally C++-first, but the code is organized so future language support can be added by introducing:
 
-The included tests cover:
-
-- `task_id -> problem_id` normalization
-- prompt determinism
-- model cache key determinism
-- response cleaning and signature validation
-- Python/C++/Java execution success/failure/timeout paths
-- aggregation on synthetic evaluation records
-- analysis output generation on synthetic data when `statsmodels` is installed
+- a language-specific dataset mapping
+- a prompt/display name mapping
+- a harness implementation for correctness and performance execution
+- any language-specific stress-test field selection

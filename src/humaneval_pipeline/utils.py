@@ -60,10 +60,10 @@ def collapse_whitespace(text: str) -> str:
     return re.sub(r"\s+", " ", text).strip()
 
 
-def task_key(problem_id: str, language: str, objective: str | None = None) -> str:
+def task_key(task_id: str, language: str, objective: str | None = None) -> str:
     if objective:
-        return f"{problem_id}::{language}::{objective}"
-    return f"{problem_id}::{language}"
+        return f"{task_id}::{language}::{objective}"
+    return f"{task_id}::{language}"
 
 
 def make_relative(path: Path, root: Path) -> str:
@@ -73,8 +73,12 @@ def make_relative(path: Path, root: Path) -> str:
         return str(path)
 
 
+def sanitize_task_id(task_id: str) -> str:
+    return re.sub(r"[^A-Za-z0-9_.-]+", "_", task_id)
+
+
 def sanitize_problem_id(problem_id: str) -> str:
-    return re.sub(r"[^A-Za-z0-9_.-]+", "_", problem_id)
+    return sanitize_task_id(problem_id)
 
 
 def maybe_float(value: float | None) -> float | None:

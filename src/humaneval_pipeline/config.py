@@ -8,15 +8,8 @@ import yaml
 
 from .utils import ensure_directory
 
-
-@dataclass
-class DatasetConfig:
-    source_urls: list[str]
-    local_files: dict[str, str] = field(default_factory=dict)
-    languages: list[str] = field(default_factory=lambda: ["python", "cpp", "java"])
-    selected_problem_ids: list[str] = field(default_factory=list)
-    pilot_size: int = 10
-    cache_dir: str = "results/cache/datasets"
+SUPPORTED_OBJECTIVES = {"runtime", "memory", "balanced"}
+SUPPORTED_PROMPT_DETAIL_LEVELS = {"minimal", "detailed"}
 
 
 @dataclass
@@ -32,29 +25,11 @@ class ModelConfig:
 
 
 @dataclass
-class BenchmarkConfig:
-    warmup_runs: int = 1
-    measured_runs: int = 5
-    poll_interval_seconds: float = 0.01
-
-
-@dataclass
-class ExecutionConfig:
-    compile_timeout_seconds: int = 30
-    timeouts: dict[str, int] = field(
-        default_factory=lambda: {"python": 20, "cpp": 20, "java": 20}
-    )
+class ToolchainConfig:
     python_executable: str = "python3"
     cpp_compiler: str = "g++"
     cpp_compile_flags: list[str] = field(default_factory=lambda: ["-std=c++17", "-O2"])
     cpp_link_flags: list[str] = field(default_factory=list)
-    java_compiler: str = "javac"
-    java_runtime: str = "java"
-    java_compile_flags: list[str] = field(default_factory=list)
-    java_runtime_flags: list[str] = field(default_factory=lambda: ["-ea"])
-
-    def timeout_for(self, language: str) -> int:
-        return int(self.timeouts[language])
 
 
 @dataclass
@@ -77,11 +52,19 @@ class PathsConfig:
 
 @dataclass
 class ExperimentConfig:
-    dataset: DatasetConfig
+    dataset_path: str = "benchmark/human_eval_cpp.json"
+    language: str = "cpp"
+    objectives: list[str] = field(default_factory=lambda: ["runtime", "memory", "balanced"])
+    prompt_detail_levels: list[str] = field(default_factory=lambda: ["minimal", "detailed"])
+    selected_task_ids: list[str] = field(default_factory=list)
+    max_tasks: int | None = None
+    warmup_runs: int = 1
+    num_repetitions: int = 5
+    compile_timeout: int = 20
+    run_timeout: int = 20
     model: ModelConfig = field(default_factory=ModelConfig)
-    benchmark: BenchmarkConfig = field(default_factory=BenchmarkConfig)
-    execution: ExecutionConfig = field(default_factory=ExecutionConfig)
     paths: PathsConfig = field(default_factory=PathsConfig)
+    toolchain: ToolchainConfig = field(default_factory=ToolchainConfig)
     overwrite_existing: bool = False
     project_root: Path = field(default_factory=lambda: Path.cwd())
 
@@ -90,7 +73,6 @@ class ExperimentConfig:
 
     def ensure_directories(self) -> None:
         for path_value in (
-            self.dataset.cache_dir,
             self.model.cache_dir,
             self.paths.results_dir,
             self.paths.analysis_dir,
@@ -105,6 +87,33 @@ class ExperimentConfig:
         ):
             ensure_directory(self.resolve_path(path_value))
 
+    def validate(self) -> None:
+        if not self.objectives:
+            raise ValueError("config.objectives must not be empty.")
+        if not self.prompt_detail_levels:
+            raise ValueError("config.prompt_detail_levels must not be empty.")
+
+        invalid_objectives = sorted(set(self.objectives) - SUPPORTED_OBJECTIVES)
+        if invalid_objectives:
+            raise ValueError(f"Unsupported objectives: {invalid_objectives}")
+
+        invalid_prompt_levels = sorted(
+            set(self.prompt_detail_levels) - SUPPORTED_PROMPT_DETAIL_LEVELS
+        )
+        if invalid_prompt_levels:
+            raise ValueError(f"Unsupported prompt detail levels: {invalid_prompt_levels}")
+
+        if self.max_tasks is not None and self.max_tasks <= 0:
+            raise ValueError("config.max_tasks must be at least 1 when provided.")
+        if self.warmup_runs < 0:
+            raise ValueError("config.warmup_runs must be at least 0.")
+        if self.num_repetitions <= 0:
+            raise ValueError("config.num_repetitions must be at least 1.")
+        if self.compile_timeout <= 0:
+            raise ValueError("config.compile_timeout must be at least 1.")
+        if self.run_timeout <= 0:
+            raise ValueError("config.run_timeout must be at least 1.")
+
 
 def _build_dataclass(model_cls: type[Any], payload: dict[str, Any] | None) -> Any:
     payload = payload or {}
@@ -115,13 +124,28 @@ def load_config(path: str | Path) -> ExperimentConfig:
     config_path = Path(path).resolve()
     raw_payload = yaml.safe_load(config_path.read_text(encoding="utf-8")) or {}
     config = ExperimentConfig(
-        dataset=_build_dataclass(DatasetConfig, raw_payload.get("dataset")),
+        dataset_path=str(raw_payload.get("dataset_path", "benchmark/human_eval_cpp.json")),
+        language=str(raw_payload.get("language", "cpp")),
+        objectives=[str(value) for value in raw_payload.get("objectives", ["runtime", "memory", "balanced"])],
+        prompt_detail_levels=[
+            str(value) for value in raw_payload.get("prompt_detail_levels", ["minimal", "detailed"])
+        ],
+        selected_task_ids=[str(value) for value in raw_payload.get("selected_task_ids", [])],
+        max_tasks=(
+            int(raw_payload["max_tasks"])
+            if raw_payload.get("max_tasks") is not None
+            else None
+        ),
+        warmup_runs=int(raw_payload.get("warmup_runs", 1)),
+        num_repetitions=int(raw_payload.get("num_repetitions", 5)),
+        compile_timeout=int(raw_payload.get("compile_timeout", 20)),
+        run_timeout=int(raw_payload.get("run_timeout", 20)),
         model=_build_dataclass(ModelConfig, raw_payload.get("model")),
-        benchmark=_build_dataclass(BenchmarkConfig, raw_payload.get("benchmark")),
-        execution=_build_dataclass(ExecutionConfig, raw_payload.get("execution")),
         paths=_build_dataclass(PathsConfig, raw_payload.get("paths")),
+        toolchain=_build_dataclass(ToolchainConfig, raw_payload.get("toolchain")),
         overwrite_existing=bool(raw_payload.get("overwrite_existing", False)),
         project_root=config_path.parent,
     )
+    config.validate()
     config.ensure_directories()
     return config
