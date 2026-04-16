@@ -30,6 +30,28 @@ class PromptAndCleanerTests(unittest.TestCase):
         self.assertTrue(cleaned.signature_valid)
         self.assertEqual(cleaned.cleaned_code, "int solve(int x) { return x + 1; }\n")
 
+    def test_python_signature_validation_ignores_annotation_differences(self) -> None:
+        function_code = (
+            "class Solution:\n"
+            "    def solve(self, nums: List[int]) -> List[int]:\n"
+            "        return nums\n"
+        )
+        raw_text = (
+            "```python\n"
+            "class Solution:\n"
+            "    def solve(self, nums):\n"
+            "        return nums\n"
+            "```"
+        )
+
+        cleaned = clean_model_response(raw_text, function_code, "solve", "python")
+
+        self.assertTrue(cleaned.signature_valid)
+        self.assertEqual(
+            cleaned.cleaned_code,
+            "class Solution:\n    def solve(self, nums):\n        return nums\n",
+        )
+
     def test_cpp_signature_validation_ignores_include_reordering(self) -> None:
         function_code = (
             "#include <vector>\n#include <algorithm>\nusing namespace std;\n"

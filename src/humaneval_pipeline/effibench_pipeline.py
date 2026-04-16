@@ -1,7 +1,9 @@
 from __future__ import annotations
 
+import ast
 import json
 import platform
+import re
 import shutil
 import subprocess
 import sys
@@ -92,6 +94,7 @@ PROMPT_TEMPLATES = {
 RAW_FIELDNAMES = [
     "task_id",
     "task_name",
+    "difficulty",
     "language",
     "objective",
     "prompt_detail",
@@ -107,6 +110,7 @@ RAW_FIELDNAMES = [
 SUMMARY_FIELDNAMES = [
     "task_id",
     "task_name",
+    "difficulty",
     "language",
     "objective",
     "prompt_detail",
@@ -155,6 +159,7 @@ SUMMARY_FIELDNAMES = [
 class EffiBenchTask:
     task_id: str
     task_name: str
+    difficulty: str | None
     language: str
     description: str
     markdown_description: str
@@ -171,6 +176,11 @@ class EffiBenchTask:
         return cls(
             task_id=str(payload["task_id"]),
             task_name=str(payload["task_name"]),
+            difficulty=(
+                str(payload["difficulty"])
+                if payload.get("difficulty") not in (None, "")
+                else None
+            ),
             language=str(payload["language"]),
             description=str(payload["description"]),
             markdown_description=str(payload["markdown_description"]),
@@ -228,7 +238,12 @@ def load_effibench_tasks(config: ExperimentConfig) -> list[EffiBenchTask]:
         raise ValueError("EffiBench dataset must contain a JSON array or JSONL sequence of task objects.")
 
     tasks = [_build_effibench_task(row) for row in payload]
-    return _select_tasks(tasks, config.selected_task_ids, config.max_tasks)
+    return _select_tasks(
+        tasks,
+        config.selected_task_ids,
+        config.selected_difficulty_levels,
+        config.max_tasks,
+    )
 
 
 def write_effibench_aggregated_results(
@@ -334,6 +349,7 @@ def _generate(config: ExperimentConfig, tasks: list[EffiBenchTask], logger) -> N
                         "raw_text_path": make_relative(raw_text_path, config.project_root),
                         "raw_json_path": make_relative(raw_json_path, config.project_root),
                         "cleaned_code_path": make_relative(cleaned_path, config.project_root),
+                        "cache_key": model_result.cache_key,
                         "signature_valid": cleaned.signature_valid,
                         "cleaner_notes": cleaned.notes,
                         "model_name": config.model.name,
@@ -351,6 +367,7 @@ def _generate(config: ExperimentConfig, tasks: list[EffiBenchTask], logger) -> N
 
 def _evaluate(config: ExperimentConfig, tasks: list[EffiBenchTask], logger) -> None:
     effibench_root = _find_effibench_root(config.resolve_path(config.dataset_path))
+    python_executable = config.resolve_executable(config.toolchain.python_executable)
 
     for objective in config.objectives:
         for prompt_detail in config.prompt_detail_levels:
@@ -391,7 +408,7 @@ def _evaluate(config: ExperimentConfig, tasks: list[EffiBenchTask], logger) -> N
                 completed = run_official_effibench_evaluator(
                     effibench_root=effibench_root,
                     model_name=model_label,
-                    python_executable=config.toolchain.python_executable,
+                    python_executable=python_executable,
                 )
                 write_text(official_stdout_path, completed.stdout)
                 write_text(official_stderr_path, completed.stderr)
@@ -593,6 +610,11 @@ def _build_effibench_task(row: Any) -> EffiBenchTask:
     return EffiBenchTask(
         task_id=str(row["problem_idx"]),
         task_name=str(row["task_name"]),
+        difficulty=(
+            str(row["difficulty"]).strip()
+            if row.get("difficulty") not in (None, "")
+            else None
+        ),
         language="python",
         description=str(row["description"]),
         markdown_description=str(row["markdown_description"]),
@@ -604,15 +626,41 @@ def _build_effibench_task(row: Any) -> EffiBenchTask:
 
 
 def _extract_entry_point(canonical_solution: str, small_test_cases: str) -> str:
+    for line in small_test_cases.splitlines():
+        match = re.search(r"\bsolution\.([A-Za-z_][A-Za-z0-9_]*)\s*\(", line)
+        if match:
+            return match.group(1)
+
+    try:
+        module = ast.parse(canonical_solution)
+    except SyntaxError:
+        module = None
+
+    if module is not None:
+        for node in module.body:
+            if not isinstance(node, ast.ClassDef) or node.name != "Solution":
+                continue
+            public_methods = [
+                member.name
+                for member in node.body
+                if isinstance(member, (ast.FunctionDef, ast.AsyncFunctionDef))
+                and not member.name.startswith("_")
+            ]
+            if public_methods:
+                return public_methods[0]
+
+            any_methods = [
+                member.name
+                for member in node.body
+                if isinstance(member, (ast.FunctionDef, ast.AsyncFunctionDef))
+            ]
+            if any_methods:
+                return any_methods[0]
+
     for line in canonical_solution.splitlines():
         stripped = line.strip()
         if stripped.startswith("def ") and "(" in stripped:
             return stripped[len("def ") : stripped.index("(")].strip()
-
-    for line in small_test_cases.splitlines():
-        if "solution." in line and "(" in line:
-            fragment = line.split("solution.", 1)[1]
-            return fragment.split("(", 1)[0].strip()
 
     raise ValueError("Could not infer EffiBench entry point from canonical solution or small test cases.")
 
@@ -620,19 +668,50 @@ def _extract_entry_point(canonical_solution: str, small_test_cases: str) -> str:
 def _select_tasks(
     tasks: list[EffiBenchTask],
     selected_task_ids: list[str],
+    selected_difficulty_levels: list[str],
     max_tasks: int | None,
 ) -> list[EffiBenchTask]:
     sorted_tasks = sorted(tasks, key=lambda task: _sort_key(task.task_id))
+    filtered_tasks = sorted_tasks
+
+    if selected_difficulty_levels:
+        available_levels = sorted(
+            {task.difficulty for task in sorted_tasks if task.difficulty},
+            key=str.casefold,
+        )
+        if not available_levels:
+            raise ValueError(
+                "Difficulty filtering was requested, but the EffiBench dataset does not include a difficulty field."
+            )
+
+        normalized_available = {_normalize_difficulty(level) for level in available_levels}
+        normalized_requested = {_normalize_difficulty(level) for level in selected_difficulty_levels}
+        missing_levels = sorted(normalized_requested - normalized_available, key=str.casefold)
+        if missing_levels:
+            raise ValueError(
+                "Requested difficulty levels are not present in the EffiBench dataset: "
+                f"{missing_levels}. Available levels: {available_levels}"
+            )
+
+        filtered_tasks = [
+            task
+            for task in filtered_tasks
+            if task.difficulty and _normalize_difficulty(task.difficulty) in normalized_requested
+        ]
+
     if not selected_task_ids:
         if max_tasks is None:
-            return sorted_tasks
-        return sorted_tasks[:max_tasks]
+            return filtered_tasks
+        return filtered_tasks[:max_tasks]
 
     selected_ids = {str(task_id) for task_id in selected_task_ids}
-    filtered = [task for task in sorted_tasks if task.task_id in selected_ids]
+    filtered = [task for task in filtered_tasks if task.task_id in selected_ids]
     missing = sorted(selected_ids - {task.task_id for task in filtered}, key=_sort_key)
     if missing:
-        raise ValueError(f"Selected task IDs not found in EffiBench dataset: {missing}")
+        scope = "filtered EffiBench task set"
+        if selected_difficulty_levels:
+            scope += f" for difficulty levels {selected_difficulty_levels}"
+        raise ValueError(f"Selected task IDs not found in {scope}: {missing}")
     return filtered
 
 
@@ -644,6 +723,7 @@ def _save_selected_manifest(config: ExperimentConfig, tasks: list[EffiBenchTask]
             "language": config.language,
             "dataset_path": config.dataset_path,
             "selected_task_ids": [task.task_id for task in tasks],
+            "selected_difficulty_levels": config.selected_difficulty_levels,
             "max_tasks": config.max_tasks,
             "tasks": [task.to_dict() for task in tasks],
         },
@@ -664,6 +744,7 @@ def _measurement_row(task: EffiBenchTask, result: dict[str, Any], root: Path) ->
     return {
         "task_id": task.task_id,
         "task_name": task.task_name,
+        "difficulty": task.difficulty or "",
         "language": result["language"],
         "objective": result.get("objective") or "",
         "prompt_detail": result.get("prompt_detail") or "",
@@ -696,6 +777,7 @@ def _summary_row(
     return {
         "task_id": task.task_id,
         "task_name": task.task_name,
+        "difficulty": task.difficulty or "",
         "language": task.language,
         "objective": objective,
         "prompt_detail": prompt_detail,
@@ -823,6 +905,10 @@ def _sort_key(task_id: str) -> tuple[int, str]:
     return (1, task_id)
 
 
+def _normalize_difficulty(value: str) -> str:
+    return value.strip().casefold()
+
+
 def _improvement_ratio(before_value: float | None, after_value: float | None) -> float | None:
     if before_value is None or after_value in (None, 0):
         return None
@@ -836,6 +922,7 @@ def _ms_to_seconds(value: float | None) -> float | None:
 
 
 def _build_run_manifest(config: ExperimentConfig, tasks: list[EffiBenchTask]) -> dict[str, object]:
+    python_executable = config.resolve_executable(config.toolchain.python_executable)
     return {
         "benchmark": "effibench",
         "platform": platform.platform(),
@@ -845,13 +932,23 @@ def _build_run_manifest(config: ExperimentConfig, tasks: list[EffiBenchTask]) ->
         "objectives": config.objectives,
         "prompt_detail_levels": config.prompt_detail_levels,
         "selected_task_ids": [task.task_id for task in tasks],
+        "selected_difficulty_levels": config.selected_difficulty_levels,
         "max_tasks": config.max_tasks,
         "model_name": config.model.name,
         "tool_versions": {
-            "python": _command_version([config.toolchain.python_executable, "--version"]),
-            "mprof": _command_version([str(Path(config.toolchain.python_executable).parent / "mprof"), "--help"]),
+            "python": _command_version([python_executable, "--version"]),
+            "mprof": _command_version([_resolve_mprof_executable(python_executable), "--help"]),
         },
     }
+
+
+def _resolve_mprof_executable(python_executable: str) -> str:
+    python_path = Path(python_executable).expanduser()
+    if python_path.is_absolute() or python_path.parent != Path("."):
+        candidate = python_path.parent / "mprof"
+        if candidate.exists():
+            return str(candidate)
+    return "mprof"
 
 
 def _command_version(command: list[str]) -> str:

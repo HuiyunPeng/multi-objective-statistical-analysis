@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import ast
 import re
 
 from .models import CleanedCodeResult
@@ -58,11 +59,36 @@ def _validate_signature(
 ) -> bool:
     if language == "cpp":
         return _validate_cpp_signature(code, function_code, entry_point, notes)
+    if language == "python":
+        return _validate_python_signature(code, function_code, entry_point, notes)
 
     expected_signature = _extract_signature(function_code, entry_point, language)
     actual_signature = _extract_signature(code, entry_point, language)
     if expected_signature and actual_signature:
         notes.append(f"Validating callable signature: {expected_signature}")
+        return _normalize_signature(expected_signature) == _normalize_signature(actual_signature)
+
+    notes.append("Falling back to entry-point presence validation.")
+    return f"{entry_point}(" in code
+
+
+def _validate_python_signature(
+    code: str,
+    function_code: str,
+    entry_point: str,
+    notes: list[str],
+) -> bool:
+    expected_signature = _extract_signature(function_code, entry_point, "python")
+    actual_signature = _extract_signature(code, entry_point, "python")
+    if expected_signature and actual_signature:
+        notes.append(f"Validating callable signature: {expected_signature}")
+
+    expected_shape = _extract_python_callable_shape(function_code, entry_point)
+    actual_shape = _extract_python_callable_shape(code, entry_point)
+    if expected_shape and actual_shape:
+        return expected_shape == actual_shape
+
+    if expected_signature and actual_signature:
         return _normalize_signature(expected_signature) == _normalize_signature(actual_signature)
 
     notes.append("Falling back to entry-point presence validation.")
@@ -119,6 +145,46 @@ def _signature_complete(signature: str, language: str) -> bool:
     if language == "python":
         return signature.endswith(":")
     return "{" in signature or signature.endswith(";")
+
+
+def _extract_python_callable_shape(source: str, entry_point: str) -> tuple[str, ...] | None:
+    try:
+        module = ast.parse(source)
+    except SyntaxError:
+        return None
+
+    solution_method = _find_python_solution_method(module, entry_point)
+    if solution_method is not None:
+        return _python_callable_shape(solution_method)
+
+    for node in ast.walk(module):
+        if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)) and node.name == entry_point:
+            return _python_callable_shape(node)
+    return None
+
+
+def _find_python_solution_method(
+    module: ast.Module,
+    entry_point: str,
+) -> ast.FunctionDef | ast.AsyncFunctionDef | None:
+    for node in module.body:
+        if not isinstance(node, ast.ClassDef) or node.name != "Solution":
+            continue
+        for member in node.body:
+            if isinstance(member, (ast.FunctionDef, ast.AsyncFunctionDef)) and member.name == entry_point:
+                return member
+    return None
+
+
+def _python_callable_shape(node: ast.FunctionDef | ast.AsyncFunctionDef) -> tuple[str, ...]:
+    params = [argument.arg for argument in node.args.posonlyargs]
+    params.extend(argument.arg for argument in node.args.args)
+    if node.args.vararg is not None:
+        params.append(f"*{node.args.vararg.arg}")
+    params.extend(argument.arg for argument in node.args.kwonlyargs)
+    if node.args.kwarg is not None:
+        params.append(f"**{node.args.kwarg.arg}")
+    return tuple(params)
 
 
 def _normalize_signature(text: str) -> str:

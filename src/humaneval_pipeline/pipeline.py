@@ -242,8 +242,9 @@ def _load_selected_manifest(config: ExperimentConfig) -> list[TaskRecord]:
 
 
 def _build_run_manifest(config: ExperimentConfig, tasks: list[TaskRecord]) -> dict[str, object]:
+    python_executable = config.resolve_executable(config.toolchain.python_executable)
     tool_versions = {
-        "python": _command_version([config.toolchain.python_executable, "--version"]),
+        "python": _command_version([python_executable, "--version"]),
     }
     if config.language == "cpp":
         tool_versions["cpp_compiler"] = _command_version([config.toolchain.cpp_compiler, "--version"])

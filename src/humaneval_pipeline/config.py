@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import os
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
@@ -57,6 +58,7 @@ class ExperimentConfig:
     objectives: list[str] = field(default_factory=lambda: ["runtime", "memory", "balanced"])
     prompt_detail_levels: list[str] = field(default_factory=lambda: ["minimal", "detailed"])
     selected_task_ids: list[str] = field(default_factory=list)
+    selected_difficulty_levels: list[str] = field(default_factory=list)
     max_tasks: int | None = None
     warmup_runs: int = 1
     num_repetitions: int = 5
@@ -70,6 +72,17 @@ class ExperimentConfig:
 
     def resolve_path(self, path_value: str) -> Path:
         return (self.project_root / path_value).resolve()
+
+    def resolve_executable(self, executable: str) -> str:
+        path = Path(executable).expanduser()
+        if path.is_absolute():
+            return str(path)
+
+        project_candidate = self.project_root / path
+        if path.parent != Path(".") or project_candidate.exists():
+            return os.path.abspath(os.fspath(project_candidate))
+
+        return executable
 
     def ensure_directories(self) -> None:
         for path_value in (
@@ -105,6 +118,8 @@ class ExperimentConfig:
 
         if self.max_tasks is not None and self.max_tasks <= 0:
             raise ValueError("config.max_tasks must be at least 1 when provided.")
+        if any(not level.strip() for level in self.selected_difficulty_levels):
+            raise ValueError("config.selected_difficulty_levels must not contain empty values.")
         if self.warmup_runs < 0:
             raise ValueError("config.warmup_runs must be at least 0.")
         if self.num_repetitions <= 0:
@@ -131,6 +146,9 @@ def load_config(path: str | Path) -> ExperimentConfig:
             str(value) for value in raw_payload.get("prompt_detail_levels", ["minimal", "detailed"])
         ],
         selected_task_ids=[str(value) for value in raw_payload.get("selected_task_ids", [])],
+        selected_difficulty_levels=[
+            str(value).strip() for value in raw_payload.get("selected_difficulty_levels", [])
+        ],
         max_tasks=(
             int(raw_payload["max_tasks"])
             if raw_payload.get("max_tasks") is not None

@@ -93,17 +93,24 @@ def run_official_effibench_evaluator(
 ) -> subprocess.CompletedProcess[str]:
     root = _resolve_effibench_root(effibench_root)
     python_path = Path(python_executable or sys.executable).expanduser()
-    if not python_path.is_absolute():
-        python_path = (Path.cwd() / python_path).resolve()
-    mprof_path = shutil.which("mprof", path=str(python_path.parent))
+    if not python_path.is_absolute() and (
+        python_path.parent != Path(".") or python_path.exists()
+    ):
+        python_path = Path(os.path.abspath(os.fspath(Path.cwd() / python_path)))
+
+    env = os.environ.copy()
+    search_path = env.get("PATH", "")
+    if python_path.parent != Path("."):
+        search_path = str(python_path.parent) + os.pathsep + search_path
+
+    mprof_path = shutil.which("mprof", path=search_path)
     if mprof_path is None:
         raise FileNotFoundError(
             "mprof was not found next to the selected Python interpreter. "
             "Install memory_profiler in that environment first."
         )
 
-    env = os.environ.copy()
-    env["PATH"] = str(python_path.parent) + os.pathsep + env.get("PATH", "")
+    env["PATH"] = search_path
     command = [str(python_path), "code_efficiency_calculator.py", "--model", model_name]
     completed = subprocess.run(
         command,

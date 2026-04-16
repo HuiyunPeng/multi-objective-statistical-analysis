@@ -23,6 +23,24 @@ from humaneval_pipeline.utils import write_json
 
 
 class EffiBenchPipelineTests(unittest.TestCase):
+    def test_resolve_executable_preserves_relative_virtualenv_symlink_path(self) -> None:
+        with tempfile.TemporaryDirectory() as tmpdir:
+            root = Path(tmpdir)
+            env_bin = root / ".venv-effibench" / "bin"
+            env_bin.mkdir(parents=True, exist_ok=True)
+            python_link = env_bin / "python"
+            python_link.symlink_to(Path(sys.executable))
+
+            config = ExperimentConfig(
+                dataset_path="dataset.json",
+                language="python",
+                project_root=root,
+            )
+
+            resolved = config.resolve_executable(".venv-effibench/bin/python")
+
+            self.assertEqual(Path(resolved), python_link)
+
     def test_load_effibench_tasks_reads_json_dataset_and_infers_entry_point(self) -> None:
         with tempfile.TemporaryDirectory() as tmpdir:
             root = Path(tmpdir)
@@ -33,6 +51,7 @@ class EffiBenchPipelineTests(unittest.TestCase):
                         {
                             "problem_idx": 3,
                             "task_name": "Demo Task",
+                            "difficulty": "Hard",
                             "description": "desc",
                             "markdown_description": "markdown desc",
                             "canonical_solution": (
@@ -57,7 +76,77 @@ class EffiBenchPipelineTests(unittest.TestCase):
 
             self.assertEqual(len(tasks), 1)
             self.assertEqual(tasks[0].task_id, "3")
+            self.assertEqual(tasks[0].difficulty, "Hard")
             self.assertEqual(tasks[0].entry_point, "solve")
+
+    def test_load_effibench_tasks_prefers_solution_method_from_small_tests(self) -> None:
+        with tempfile.TemporaryDirectory() as tmpdir:
+            root = Path(tmpdir)
+            dataset_path = root / "dataset.json"
+            dataset_path.write_text(
+                json.dumps(
+                    [
+                        {
+                            "problem_idx": 140,
+                            "task_name": "Word Break II",
+                            "difficulty": "Hard",
+                            "description": "desc",
+                            "markdown_description": "markdown desc",
+                            "canonical_solution": (
+                                "class Trie:\n"
+                                "    def __init__(self):\n"
+                                "        self.children = {}\n\n"
+                                "class Solution:\n"
+                                "    def wordBreak(self, s: str, wordDict: list[str]) -> list[str]:\n"
+                                "        return []\n"
+                            ),
+                            "small_test_cases": (
+                                "solution = Solution()\n"
+                                "assert solution.wordBreak('catsanddog', ['cat']) == []\n"
+                            ),
+                            "test_case": "assert solution.wordBreak('catsanddog', ['cat']) == []\n",
+                        }
+                    ]
+                ),
+                encoding="utf-8",
+            )
+            config = ExperimentConfig(
+                dataset_path=str(dataset_path),
+                language="python",
+                project_root=root,
+            )
+
+            tasks = load_effibench_tasks(config)
+
+            self.assertEqual(tasks[0].entry_point, "wordBreak")
+
+    def test_load_effibench_tasks_filters_by_difficulty_before_max_tasks(self) -> None:
+        with tempfile.TemporaryDirectory() as tmpdir:
+            root = Path(tmpdir)
+            dataset_path = root / "dataset.json"
+            dataset_path.write_text(
+                json.dumps(
+                    [
+                        _dataset_row(problem_idx=1, task_name="Easy Task", difficulty="Easy"),
+                        _dataset_row(problem_idx=2, task_name="Hard Task A", difficulty="Hard"),
+                        _dataset_row(problem_idx=3, task_name="Medium Task", difficulty="Medium"),
+                        _dataset_row(problem_idx=4, task_name="Hard Task B", difficulty="Hard"),
+                    ]
+                ),
+                encoding="utf-8",
+            )
+            config = ExperimentConfig(
+                dataset_path=str(dataset_path),
+                language="python",
+                selected_difficulty_levels=["hard"],
+                max_tasks=1,
+                project_root=root,
+            )
+
+            tasks = load_effibench_tasks(config)
+
+            self.assertEqual([task.task_id for task in tasks], ["2"])
+            self.assertEqual([task.difficulty for task in tasks], ["Hard"])
 
     def test_build_prompt_includes_description_and_tests(self) -> None:
         with tempfile.TemporaryDirectory() as tmpdir:
@@ -155,6 +244,7 @@ class EffiBenchPipelineTests(unittest.TestCase):
             with summary_path.open("r", encoding="utf-8", newline="") as handle:
                 rows = list(csv.DictReader(handle))
 
+            self.assertEqual(rows[0]["difficulty"], "Hard")
             self.assertEqual(rows[0]["runtime_improvement_ratio"], "2.0")
             self.assertEqual(rows[0]["memory_improvement_ratio"], "2.0")
             self.assertEqual(rows[0]["memory_area_improvement_ratio"], "2.0")
@@ -163,26 +253,29 @@ class EffiBenchPipelineTests(unittest.TestCase):
 def _write_dataset(root: Path) -> Path:
     dataset_path = root / "dataset.json"
     dataset_path.write_text(
-        json.dumps(
-            [
-                {
-                    "problem_idx": 3,
-                    "task_name": "Demo Task",
-                    "description": "desc",
-                    "markdown_description": "markdown desc",
-                    "canonical_solution": (
-                        "class Solution:\n"
-                        "    def solve(self, x: int) -> int:\n"
-                        "        return x + 1\n"
-                    ),
-                    "small_test_cases": "solution = Solution()\nassert solution.solve(1) == 2\n",
-                    "test_case": "solution = Solution()\nassert solution.solve(2) == 3\n",
-                }
-            ]
-        ),
+        json.dumps([_dataset_row(problem_idx=3, task_name="Demo Task", difficulty="Hard")]),
         encoding="utf-8",
     )
     return dataset_path
+
+
+def _dataset_row(*, problem_idx: int, task_name: str, difficulty: str | None = None) -> dict[str, object]:
+    payload: dict[str, object] = {
+        "problem_idx": problem_idx,
+        "task_name": task_name,
+        "description": "desc",
+        "markdown_description": "markdown desc",
+        "canonical_solution": (
+            "class Solution:\n"
+            "    def solve(self, x: int) -> int:\n"
+            "        return x + 1\n"
+        ),
+        "small_test_cases": "solution = Solution()\nassert solution.solve(1) == 2\n",
+        "test_case": "solution = Solution()\nassert solution.solve(2) == 3\n",
+    }
+    if difficulty is not None:
+        payload["difficulty"] = difficulty
+    return payload
 
 
 def _effibench_paths() -> PathsConfig:

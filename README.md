@@ -123,7 +123,8 @@ python3 scripts/analyze_results.py --config config_effibench.yaml
 
 Notes for EffiBench:
 
-- `config_effibench.yaml` is a template: set `dataset_path` to your local EffiBench checkout before running
+- `config_effibench.yaml` can point at EffiBench's richer `data/dataset_with_difficulty_and_algorithm.json` file if you want difficulty-aware slices such as `Hard`
+- `selected_difficulty_levels` filters the dataset before `max_tasks`; for example, `selected_difficulty_levels: [Hard]` and `max_tasks: 10` runs the first 10 hard problems
 - the configured Python executable should point to an environment with `memory_profiler` installed so `mprof` is available
 - the EffiBench pipeline writes its own artifacts under `results/effibench/`, `prompts/effibench/`, and `generated_code/effibench/`
 - EffiBench analysis includes the same blocked model used for HumanEval and adds `memory_area_improvement_ratio` when present

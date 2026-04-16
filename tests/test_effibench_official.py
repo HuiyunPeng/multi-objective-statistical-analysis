@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import os
 import sys
 import tempfile
 import unittest
@@ -12,12 +13,37 @@ if str(SRC_ROOT) not in sys.path:
     sys.path.insert(0, str(SRC_ROOT))
 
 from humaneval_pipeline.effibench_official import (
+    run_official_effibench_evaluator,
     stage_effibench_results,
     summarize_official_effibench_results,
 )
 
 
 class EffiBenchOfficialTests(unittest.TestCase):
+    def test_run_official_evaluator_accepts_relative_venv_python_symlink(self) -> None:
+        with tempfile.TemporaryDirectory() as tmpdir:
+            root = Path(tmpdir)
+            effibench_root = self._make_effibench_root(root / "EffiBench")
+            env_bin = root / ".venv-effibench" / "bin"
+            env_bin.mkdir(parents=True, exist_ok=True)
+            (env_bin / "python").symlink_to(Path(sys.executable))
+            mprof_path = env_bin / "mprof"
+            mprof_path.write_text("#!/usr/bin/env bash\nexit 0\n", encoding="utf-8")
+            mprof_path.chmod(0o755)
+
+            current_cwd = Path.cwd()
+            os.chdir(root)
+            try:
+                completed = run_official_effibench_evaluator(
+                    effibench_root=effibench_root,
+                    model_name="demo-model",
+                    python_executable=".venv-effibench/bin/python",
+                )
+            finally:
+                os.chdir(current_cwd)
+
+            self.assertEqual(completed.returncode, 0)
+
     def test_stage_effibench_results_applies_limit(self) -> None:
         with tempfile.TemporaryDirectory() as tmpdir:
             root = Path(tmpdir)

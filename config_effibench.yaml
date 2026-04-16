@@ -1,10 +1,11 @@
 # Point this at your local EffiBench checkout.
-dataset_path: "/tmp/EffiBench/data/dataset.json"
+dataset_path: "/home/min/a/peng397/EffiBench/data/dataset_with_difficulty_and_algorithm.json"
 language: python
 objectives: [runtime, memory, balanced]
 prompt_detail_levels: [minimal, detailed]
 selected_task_ids: []
-max_tasks: 10
+selected_difficulty_levels: [Hard]
+max_tasks: 30
 warmup_runs: 2
 num_repetitions: 10
 compile_timeout: 20
