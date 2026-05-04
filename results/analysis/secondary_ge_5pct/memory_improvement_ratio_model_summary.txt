@@ -1,0 +1,47 @@
+                               OLS Regression Results                               
+====================================================================================
+Dep. Variable:     memory_improvement_ratio   R-squared:                       0.999
+Model:                                  OLS   Adj. R-squared:                  0.998
+Method:                       Least Squares   F-statistic:                     1854.
+Date:                      Mon, 13 Apr 2026   Prob (F-statistic):           1.20e-81
+Time:                              23:03:11   Log-Likelihood:                 266.09
+No. Observations:                        88   AIC:                            -484.2
+Df Residuals:                            64   BIC:                            -424.7
+Df Model:                                23                                         
+Covariance Type:                  nonrobust                                         
+===================================================================================================================================
+                                                                      coef    std err          t      P>|t|      [0.025      0.975]
+-----------------------------------------------------------------------------------------------------------------------------------
+Intercept                                                           1.1591      0.002    695.171      0.000       1.156       1.162
+C(block_id, Sum)[S.cpp::100]                                       -0.1060      0.008    -13.516      0.000      -0.122      -0.090
+C(block_id, Sum)[S.cpp::101]                                       -0.0881      0.006    -15.776      0.000      -0.099      -0.077
+C(block_id, Sum)[S.cpp::105]                                       -0.0616      0.006    -10.104      0.000      -0.074      -0.049
+C(block_id, Sum)[S.cpp::112]                                       -0.0634      0.006    -11.366      0.000      -0.075      -0.052
+C(block_id, Sum)[S.cpp::113]                                       -0.0613      0.014     -4.518      0.000      -0.088      -0.034
+C(block_id, Sum)[S.cpp::117]                                       -0.1013      0.008    -12.894      0.000      -0.117      -0.086
+C(block_id, Sum)[S.cpp::14]                                        -0.1016      0.006    -18.195      0.000      -0.113      -0.090
+C(block_id, Sum)[S.cpp::149]                                       -0.0707      0.007    -10.364      0.000      -0.084      -0.057
+C(block_id, Sum)[S.cpp::15]                                        -0.0948      0.006    -15.509      0.000      -0.107      -0.083
+C(block_id, Sum)[S.cpp::152]                                       -0.0996      0.006    -17.847      0.000      -0.111      -0.088
+C(block_id, Sum)[S.cpp::160]                                       -0.0676      0.010     -7.060      0.000      -0.087      -0.049
+C(block_id, Sum)[S.cpp::161]                                       -0.0964      0.006    -17.263      0.000      -0.108      -0.085
+C(block_id, Sum)[S.cpp::32]                                        -0.0887      0.006    -15.882      0.000      -0.100      -0.078
+C(block_id, Sum)[S.cpp::46]                                         1.1227      0.006    201.142      0.000       1.112       1.134
+C(block_id, Sum)[S.cpp::69]                                        -0.0269      0.007     -3.937      0.000      -0.040      -0.013
+C(block_id, Sum)[S.cpp::71]                                        -0.0260      0.006     -4.660      0.000      -0.037      -0.015
+C(block_id, Sum)[S.cpp::81]                                        -0.0191      0.006     -3.413      0.001      -0.030      -0.008
+C(block_id, Sum)[S.cpp::92]                                         0.1476      0.007     21.632      0.000       0.134       0.161
+C(objective, Sum)[S.balanced]                                    4.781e-05      0.002      0.022      0.982      -0.004       0.004
+C(objective, Sum)[S.memory]                                         0.0003      0.002      0.137      0.891      -0.004       0.005
+C(prompt_detail, Sum)[S.detailed]                                  -0.0005      0.002     -0.346      0.730      -0.004       0.002
+C(objective, Sum)[S.balanced]:C(prompt_detail, Sum)[S.detailed]    -0.0026      0.002     -1.238      0.220      -0.007       0.002
+C(objective, Sum)[S.memory]:C(prompt_detail, Sum)[S.detailed]      -0.0004      0.002     -0.184      0.854      -0.005       0.004
+==============================================================================
+Omnibus:                       31.799   Durbin-Watson:                   2.809
+Prob(Omnibus):                  0.000   Jarque-Bera (JB):              504.593
+Skew:                           0.279   Prob(JB):                    2.69e-110
+Kurtosis:                      14.718   Cond. No.                         9.92
+==============================================================================
+
+Notes:
+[1] Standard Errors assume that the covariance matrix of the errors is correctly specified.
