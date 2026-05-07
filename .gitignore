@@ -2,7 +2,6 @@
 .env
 __pycache__/
 *.pyc
-generated_code/
 logs/
-results/
-prompts/
+results/cache/
+results/generation_metadata/

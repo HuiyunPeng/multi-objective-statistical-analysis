@@ -1,0 +1,17 @@
+Optimize the following C++ code for both runtime and memory usage while preserving correctness. Do not change the function signature. Balance the tradeoff between speed and memory use. Reduce repeated computation, avoid unnecessary allocations, and avoid making one metric much worse just to improve the other. Output only the final optimized code.
+
+Code:
+#include<stdio.h>
+#include<math.h>
+#include<string>
+#include<algorithm>
+using namespace std;
+#include<stdlib.h>
+int count_upper(string s){
+string uvowel="AEIOU";
+    int count=0;
+    for (int i=0;i*2<s.length();i++)
+    if (find(uvowel.begin(),uvowel.end(),s[i*2])!=uvowel.end())
+        count+=1;
+    return count;
+}

@@ -1,0 +1,23 @@
+#include <vector>
+#include <string>
+
+using namespace std;
+
+vector<int> parse_nested_parens(string paren_string) {
+    vector<int> all_levels;
+    int level = 0, max_level = 0;
+
+    for (char chr : paren_string) {
+        if (chr == '(') {
+            ++level;
+            if (level > max_level) max_level = level;
+        } else if (chr == ')') {
+            if (--level == 0) {
+                all_levels.push_back(max_level);
+                max_level = 0;
+            }
+        }
+    }
+
+    return all_levels;
+}

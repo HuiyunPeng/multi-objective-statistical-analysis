@@ -1,0 +1,19 @@
+Optimize the following C++ code for both runtime and memory usage while preserving correctness. Do not change the function signature. Balance the tradeoff between speed and memory use. Reduce repeated computation, avoid unnecessary allocations, and avoid making one metric much worse just to improve the other. Output only the final optimized code.
+
+Code:
+#include<stdio.h>
+using namespace std;
+#include<algorithm>
+#include<math.h>
+#include<stdlib.h>
+int greatest_common_divisor(int a, int b){
+int out,m;
+    while (true){
+        if (a<b) 
+        {
+            m=a;a=b;b=m;
+        }
+        a=a%b;
+        if (a==0) return b;
+    }
+}

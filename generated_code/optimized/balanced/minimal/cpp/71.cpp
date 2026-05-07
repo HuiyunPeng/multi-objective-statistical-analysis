@@ -1,0 +1,9 @@
+#include <cmath>
+
+float triangle_area(float a, float b, float c) {
+    if (a <= 0.0f || b <= 0.0f || c <= 0.0f || a + b <= c || a + c <= b || b + c <= a)
+        return -1.0f;
+
+    const float s = (a + b + c) * 0.5f;
+    return std::sqrt(s * (s - a) * (s - b) * (s - c));
+}

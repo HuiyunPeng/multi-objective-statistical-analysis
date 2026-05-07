@@ -1,0 +1,14 @@
+Optimize the following C++ code for both runtime and memory usage while preserving correctness. Do not change the function signature. Balance the tradeoff between speed and memory use. Reduce repeated computation, avoid unnecessary allocations, and avoid making one metric much worse just to improve the other. Output only the final optimized code.
+
+Code:
+#include<stdio.h>
+#include<math.h>
+#include<vector>
+#include<algorithm>
+using namespace std;
+#include<stdlib.h>
+vector<int> maximum(vector<int> arr,int k){
+sort(arr.begin(),arr.end());
+    vector<int> out(arr.end()-k,arr.end());
+    return out;
+}

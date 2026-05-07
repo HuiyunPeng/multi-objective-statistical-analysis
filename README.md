@@ -115,19 +115,6 @@ python3 scripts/analyze_results.py \
   --input-csv results/analysis_ready.csv \
   --output-dir results/analysis
 ```
-
-## Bundled Results Archive
-
-The repo root also includes `results.tar`, which packages the archived `results/` tree for the default benchmark track:
-
-- HumanEval: raw outputs, aggregated CSVs, and analysis artifacts
-
-You can extract it with:
-
-```bash
-tar -xf results.tar
-```
-
 ## Artifact Layout
 
 Main outputs for the default pipeline:
@@ -135,9 +122,6 @@ Main outputs for the default pipeline:
 - `results/selected_tasks.json`: selected task manifest
 - `results/run_manifest.json`: environment and toolchain snapshot
 - `prompts/<objective>/<prompt_detail>/<language>/<task_id>.txt`: saved prompts
-- `results/raw_responses/<objective>/<prompt_detail>/<language>/<task_id>.txt`: raw response text
-- `results/raw_responses/<objective>/<prompt_detail>/<language>/<task_id>.json`: raw API response payload
-- `results/generation_metadata/<objective>/<prompt_detail>/<language>/<task_id>.json`: prompt and response bookkeeping
 - `generated_code/baseline/<language>/<task_id>.<ext>`: baseline source
 - `generated_code/optimized/<objective>/<prompt_detail>/<language>/<task_id>.<ext>`: cleaned optimized code
 - `results/evaluations/...`: per-case evaluation records

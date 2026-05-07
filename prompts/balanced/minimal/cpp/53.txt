@@ -1,0 +1,11 @@
+Optimize the following C++ code for both runtime and memory usage while preserving correctness. Balance the tradeoff between them. Do not change the function signature. Output only the final optimized code.
+
+Code:
+#include<stdio.h>
+#include<stdlib.h>
+using namespace std;
+#include<algorithm>
+#include<math.h>
+int add(int x,int y){
+return x+y;
+}

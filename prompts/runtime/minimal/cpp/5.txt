@@ -1,0 +1,20 @@
+Optimize the following C++ code for runtime while preserving correctness. Do not change the function signature. Output only the final optimized code.
+
+Code:
+#include<stdio.h>
+#include<vector>
+using namespace std;
+#include<algorithm>
+#include<math.h>
+#include<stdlib.h>
+vector<int> intersperse(vector<int> numbers, int delimeter){
+vector<int> out={};
+    if (numbers.size()>0) out.push_back(numbers[0]);
+    for (int i=1;i<numbers.size();i++)
+    {
+        out.push_back(delimeter);
+        out.push_back(numbers[i]);
+
+    }
+    return out;
+}

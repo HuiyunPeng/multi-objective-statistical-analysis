@@ -1,0 +1,106 @@
+{
+  "compile_error": false,
+  "compile_returncode": 0,
+  "compile_stderr": "/tmp/humaneval_cpp_y8sun0ck/solution.cpp:84:45: warning: character constant too long for its type\n   84 | int main(){cycpattern_check(std::string(400,'qwertyuiopasdfghjklzxcvbnm'),\"mnbvcxzlkjhgfdsapoiuytrewq\");cycpattern_check(std::string(3333,'xxxyyyzzz')+\"xyz\",\"zyxzyx\");cycpattern_check(std::string(2000,'hello')+\"world\",\"worldhello\");cycpattern_check(std::string(1000,'1234567890'),\"0987654321\");cycpattern_check(std::string(600,'thequickbrownfox'),\"foxquick\");}\n      |                                             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~\n/tmp/humaneval_cpp_y8sun0ck/solution.cpp:84:139: warning: character constant too long for its type\n   84 | int main(){cycpattern_check(std::string(400,'qwertyuiopasdfghjklzxcvbnm'),\"mnbvcxzlkjhgfdsapoiuytrewq\");cycpattern_check(std::string(3333,'xxxyyyzzz')+\"xyz\",\"zyxzyx\");cycpattern_check(std::string(2000,'hello')+\"world\",\"worldhello\");cycpattern_check(std::string(1000,'1234567890'),\"0987654321\");cycpattern_check(std::string(600,'thequickbrownfox'),\"foxquick\");}\n      |                                                                                                                                           ^~~~~~~~~~~\n/tmp/humaneval_cpp_y8sun0ck/solution.cpp:84:202: warning: character constant too long for its type\n   84 | int main(){cycpattern_check(std::string(400,'qwertyuiopasdfghjklzxcvbnm'),\"mnbvcxzlkjhgfdsapoiuytrewq\");cycpattern_check(std::string(3333,'xxxyyyzzz')+\"xyz\",\"zyxzyx\");cycpattern_check(std::string(2000,'hello')+\"world\",\"worldhello\");cycpattern_check(std::string(1000,'1234567890'),\"0987654321\");cycpattern_check(std::string(600,'thequickbrownfox'),\"foxquick\");}\n      |                                                                                                                                                                                                          ^~~~~~~\n/tmp/humaneval_cpp_y8sun0ck/solution.cpp:84:267: warning: character constant too long for its type\n   84 | int main(){cycpattern_check(std::string(400,'qwertyuiopasdfghjklzxcvbnm'),\"mnbvcxzlkjhgfdsapoiuytrewq\");cycpattern_check(std::string(3333,'xxxyyyzzz')+\"xyz\",\"zyxzyx\");cycpattern_check(std::string(2000,'hello')+\"world\",\"worldhello\");cycpattern_check(std::string(1000,'1234567890'),\"0987654321\");cycpattern_check(std::string(600,'thequickbrownfox'),\"foxquick\");}\n      |                                                                                                                                                                                                                                                                           ^~~~~~~~~~~~\n/tmp/humaneval_cpp_y8sun0ck/solution.cpp:84:328: warning: character constant too long for its type\n   84 | int main(){cycpattern_check(std::string(400,'qwertyuiopasdfghjklzxcvbnm'),\"mnbvcxzlkjhgfdsapoiuytrewq\");cycpattern_check(std::string(3333,'xxxyyyzzz')+\"xyz\",\"zyxzyx\");cycpattern_check(std::string(2000,'hello')+\"world\",\"worldhello\");cycpattern_check(std::string(1000,'1234567890'),\"0987654321\");cycpattern_check(std::string(600,'thequickbrownfox'),\"foxquick\");}\n      |                                                                                                                                                                                                                                                                                                                                        ^~~~~~~~~~~~~~~~~~\n/tmp/humaneval_cpp_y8sun0ck/solution.cpp: In function \u2018int main()\u2019:\n/tmp/humaneval_cpp_y8sun0ck/solution.cpp:84:45: warning: overflow in conversion from \u2018int\u2019 to \u2018char\u2019 changes value from \u20181986162285\u2019 to \u2018'm'\u2019 [-Woverflow]\n   84 | int main(){cycpattern_check(std::string(400,'qwertyuiopasdfghjklzxcvbnm'),\"mnbvcxzlkjhgfdsapoiuytrewq\");cycpattern_check(std::string(3333,'xxxyyyzzz')+\"xyz\",\"zyxzyx\");cycpattern_check(std::string(2000,'hello')+\"world\",\"worldhello\");cycpattern_check(std::string(1000,'1234567890'),\"0987654321\");cycpattern_check(std::string(600,'thequickbrownfox'),\"foxquick\");}\n      |                                             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~\n/tmp/humaneval_cpp_y8sun0ck/solution.cpp:84:139: warning: overflow in conversion from \u2018int\u2019 to \u2018char\u2019 changes value from \u20182038069882\u2019 to \u2018'z'\u2019 [-Woverflow]\n   84 | int main(){cycpattern_check(std::string(400,'qwertyuiopasdfghjklzxcvbnm'),\"mnbvcxzlkjhgfdsapoiuytrewq\");cycpattern_check(std::string(3333,'xxxyyyzzz')+\"xyz\",\"zyxzyx\");cycpattern_check(std::string(2000,'hello')+\"world\",\"worldhello\");cycpattern_check(std::string(1000,'1234567890'),\"0987654321\");cycpattern_check(std::string(600,'thequickbrownfox'),\"foxquick\");}\n      |                                                                                                                                           ^~~~~~~~~~~\n/tmp/humaneval_cpp_y8sun0ck/solution.cpp:84:202: warning: overflow in conversion from \u2018int\u2019 to \u2018char\u2019 changes value from \u20181701604463\u2019 to \u2018'o'\u2019 [-Woverflow]\n   84 | int main(){cycpattern_check(std::string(400,'qwertyuiopasdfghjklzxcvbnm'),\"mnbvcxzlkjhgfdsapoiuytrewq\");cycpattern_check(std::string(3333,'xxxyyyzzz')+\"xyz\",\"zyxzyx\");cycpattern_check(std::string(2000,'hello')+\"world\",\"worldhello\");cycpattern_check(std::string(1000,'1234567890'),\"0987654321\");cycpattern_check(std::string(600,'thequickbrownfox'),\"foxquick\");}\n      |                                                                                                                                                                                                          ^~~~~~~\n/tmp/humaneval_cpp_y8sun0ck/solution.cpp:84:267: warning: overflow in conversion from \u2018int\u2019 to \u2018char\u2019 changes value from \u2018926431536\u2019 to \u2018'0'\u2019 [-Woverflow]\n   84 | int main(){cycpattern_check(std::string(400,'qwertyuiopasdfghjklzxcvbnm'),\"mnbvcxzlkjhgfdsapoiuytrewq\");cycpattern_check(std::string(3333,'xxxyyyzzz')+\"xyz\",\"zyxzyx\");cycpattern_check(std::string(2000,'hello')+\"world\",\"worldhello\");cycpattern_check(std::string(1000,'1234567890'),\"0987654321\");cycpattern_check(std::string(600,'thequickbrownfox'),\"foxquick\");}\n      |                                                                                                                                                                                                                                                                           ^~~~~~~~~~~~\n/tmp/humaneval_cpp_y8sun0ck/solution.cpp:84:328: warning: overflow in conversion from \u2018int\u2019 to \u2018char\u2019 changes value from \u20181852206968\u2019 to \u2018'x'\u2019 [-Woverflow]\n   84 | int main(){cycpattern_check(std::string(400,'qwertyuiopasdfghjklzxcvbnm'),\"mnbvcxzlkjhgfdsapoiuytrewq\");cycpattern_check(std::string(3333,'xxxyyyzzz')+\"xyz\",\"zyxzyx\");cycpattern_check(std::string(2000,'hello')+\"world\",\"worldhello\");cycpattern_check(std::string(1000,'1234567890'),\"0987654321\");cycpattern_check(std::string(600,'thequickbrownfox'),\"foxquick\");}\n      |                                                                                                                                                                                                                                                                                                                                        ^~~~~~~~~~~~~~~~~~\n",
+  "compile_stdout": "",
+  "correctness_pass": true,
+  "correctness_returncode": null,
+  "correctness_stderr": "",
+  "correctness_stdout": "",
+  "language": "cpp",
+  "memory_cv": 0.008352395698408139,
+  "memory_mean": 9467494.4,
+  "memory_std": 79076.25950126315,
+  "objective": "runtime",
+  "prompt_detail": "detailed",
+  "runtime_cv": 0.005420821587846777,
+  "runtime_mean_ms": 64.12410303018987,
+  "runtime_std_ms": 0.34760532200736416,
+  "samples": [
+    {
+      "peak_memory_bytes": 9527296,
+      "repetition_index": 1,
+      "returncode": 0,
+      "runtime_milliseconds": 63.700880855321884,
+      "stderr": "",
+      "stdout": ""
+    },
+    {
+      "peak_memory_bytes": 9359360,
+      "repetition_index": 2,
+      "returncode": 0,
+      "runtime_milliseconds": 64.49916306883097,
+      "stderr": "",
+      "stdout": ""
+    },
+    {
+      "peak_memory_bytes": 9474048,
+      "repetition_index": 3,
+      "returncode": 0,
+      "runtime_milliseconds": 64.35014307498932,
+      "stderr": "",
+      "stdout": ""
+    },
+    {
+      "peak_memory_bytes": 9519104,
+      "repetition_index": 4,
+      "returncode": 0,
+      "runtime_milliseconds": 64.06842218711972,
+      "stderr": "",
+      "stdout": ""
+    },
+    {
+      "peak_memory_bytes": 9351168,
+      "repetition_index": 5,
+      "returncode": 0,
+      "runtime_milliseconds": 63.83847072720528,
+      "stderr": "",
+      "stdout": ""
+    },
+    {
+      "peak_memory_bytes": 9527296,
+      "repetition_index": 6,
+      "returncode": 0,
+      "runtime_milliseconds": 63.81555134430528,
+      "stderr": "",
+      "stdout": ""
+    },
+    {
+      "peak_memory_bytes": 9531392,
+      "repetition_index": 7,
+      "returncode": 0,
+      "runtime_milliseconds": 64.7334735840559,
+      "stderr": "",
+      "stdout": ""
+    },
+    {
+      "peak_memory_bytes": 9355264,
+      "repetition_index": 8,
+      "returncode": 0,
+      "runtime_milliseconds": 64.33778302744031,
+      "stderr": "",
+      "stdout": ""
+    },
+    {
+      "peak_memory_bytes": 9515008,
+      "repetition_index": 9,
+      "returncode": 0,
+      "runtime_milliseconds": 64.11898136138916,
+      "stderr": "",
+      "stdout": ""
+    },
+    {
+      "peak_memory_bytes": 9515008,
+      "repetition_index": 10,
+      "returncode": 0,
+      "runtime_milliseconds": 63.7781610712409,
+      "stderr": "",
+      "stdout": ""
+    }
+  ],
+  "source_path": "/home/min/a/peng397/multi-objective-statistical-analysis/generated_code/optimized/runtime/detailed/cpp/154.cpp",
+  "task_id": "154",
+  "test_error": false,
+  "timeout": false,
+  "variant": "after"
+}

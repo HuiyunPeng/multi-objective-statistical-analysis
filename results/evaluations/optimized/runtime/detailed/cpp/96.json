@@ -1,0 +1,106 @@
+{
+  "compile_error": false,
+  "compile_returncode": 0,
+  "compile_stderr": "",
+  "compile_stdout": "",
+  "correctness_pass": true,
+  "correctness_returncode": null,
+  "correctness_stderr": "",
+  "correctness_stdout": "",
+  "language": "cpp",
+  "memory_cv": 0.014638802803941904,
+  "memory_mean": 3142041.6,
+  "memory_std": 45995.72738418211,
+  "objective": "runtime",
+  "prompt_detail": "detailed",
+  "runtime_cv": 0.11703843476858873,
+  "runtime_mean_ms": 47.9226095136255,
+  "runtime_std_ms": 5.608787207501008,
+  "samples": [
+    {
+      "peak_memory_bytes": 3186688,
+      "repetition_index": 1,
+      "returncode": 0,
+      "runtime_milliseconds": 51.292493008077145,
+      "stderr": "",
+      "stdout": ""
+    },
+    {
+      "peak_memory_bytes": 3051520,
+      "repetition_index": 2,
+      "returncode": 0,
+      "runtime_milliseconds": 47.786390874534845,
+      "stderr": "",
+      "stdout": ""
+    },
+    {
+      "peak_memory_bytes": 3149824,
+      "repetition_index": 3,
+      "returncode": 0,
+      "runtime_milliseconds": 32.97061938792467,
+      "stderr": "",
+      "stdout": ""
+    },
+    {
+      "peak_memory_bytes": 3117056,
+      "repetition_index": 4,
+      "returncode": 0,
+      "runtime_milliseconds": 48.0083916336298,
+      "stderr": "",
+      "stdout": ""
+    },
+    {
+      "peak_memory_bytes": 3145728,
+      "repetition_index": 5,
+      "returncode": 0,
+      "runtime_milliseconds": 47.991080675274134,
+      "stderr": "",
+      "stdout": ""
+    },
+    {
+      "peak_memory_bytes": 3125248,
+      "repetition_index": 6,
+      "returncode": 0,
+      "runtime_milliseconds": 48.064851667732,
+      "stderr": "",
+      "stdout": ""
+    },
+    {
+      "peak_memory_bytes": 3198976,
+      "repetition_index": 7,
+      "returncode": 0,
+      "runtime_milliseconds": 47.936420887708664,
+      "stderr": "",
+      "stdout": ""
+    },
+    {
+      "peak_memory_bytes": 3125248,
+      "repetition_index": 8,
+      "returncode": 0,
+      "runtime_milliseconds": 52.68402909860015,
+      "stderr": "",
+      "stdout": ""
+    },
+    {
+      "peak_memory_bytes": 3203072,
+      "repetition_index": 9,
+      "returncode": 0,
+      "runtime_milliseconds": 52.549277897924185,
+      "stderr": "",
+      "stdout": ""
+    },
+    {
+      "peak_memory_bytes": 3117056,
+      "repetition_index": 10,
+      "returncode": 0,
+      "runtime_milliseconds": 49.942540004849434,
+      "stderr": "",
+      "stdout": ""
+    }
+  ],
+  "source_path": "/home/min/a/peng397/multi-objective-statistical-analysis/generated_code/optimized/runtime/detailed/cpp/96.cpp",
+  "task_id": "96",
+  "test_error": false,
+  "timeout": false,
+  "variant": "after"
+}

@@ -1,0 +1,106 @@
+{
+  "compile_error": false,
+  "compile_returncode": 0,
+  "compile_stderr": "/tmp/humaneval_cpp_gpxu3yg1/solution.cpp:22:20: warning: integer constant is so large that it is unsigned\n   22 |     circular_shift(12345678901234567890, 10);\n      |                    ^~~~~~~~~~~~~~~~~~~~\n/tmp/humaneval_cpp_gpxu3yg1/solution.cpp: In function \u2018int main()\u2019:\n/tmp/humaneval_cpp_gpxu3yg1/solution.cpp:22:20: warning: overflow in conversion from \u2018__int128\u2019 to \u2018int\u2019 changes value from \u201812345678901234567890\u2019 to \u2018-350287150\u2019 [-Woverflow]\n/tmp/humaneval_cpp_gpxu3yg1/solution.cpp:24:20: warning: overflow in conversion from \u2018long int\u2019 to \u2018int\u2019 changes value from \u2018999999999999999\u2019 to \u2018-1530494977\u2019 [-Woverflow]\n   24 |     circular_shift(999999999999999, 1);\n      |                    ^~~~~~~~~~~~~~~\n/tmp/humaneval_cpp_gpxu3yg1/solution.cpp:25:20: warning: overflow in conversion from \u2018long int\u2019 to \u2018int\u2019 changes value from \u20189999999999\u2019 to \u20181410065407\u2019 [-Woverflow]\n   25 |     circular_shift(9999999999, 1);\n      |                    ^~~~~~~~~~\n/tmp/humaneval_cpp_gpxu3yg1/solution.cpp:26:20: warning: overflow in conversion from \u2018long int\u2019 to \u2018int\u2019 changes value from \u20181234567890123456\u2019 to \u20181015724736\u2019 [-Woverflow]\n   26 |     circular_shift(1234567890123456, 16);\n      |                    ^~~~~~~~~~~~~~~~\n",
+  "compile_stdout": "",
+  "correctness_pass": true,
+  "correctness_returncode": null,
+  "correctness_stderr": "",
+  "correctness_stdout": "",
+  "language": "cpp",
+  "memory_cv": 0.020747496225118484,
+  "memory_mean": 2970009.6,
+  "memory_std": 61620.262964565656,
+  "objective": "runtime",
+  "prompt_detail": "detailed",
+  "runtime_cv": 0.05419123888780616,
+  "runtime_mean_ms": 43.63752515055239,
+  "runtime_std_ms": 2.364771549906234,
+  "samples": [
+    {
+      "peak_memory_bytes": 3039232,
+      "repetition_index": 1,
+      "returncode": 0,
+      "runtime_milliseconds": 39.49322225525975,
+      "stderr": "",
+      "stdout": ""
+    },
+    {
+      "peak_memory_bytes": 2985984,
+      "repetition_index": 2,
+      "returncode": 0,
+      "runtime_milliseconds": 41.976268868893385,
+      "stderr": "",
+      "stdout": ""
+    },
+    {
+      "peak_memory_bytes": 3043328,
+      "repetition_index": 3,
+      "returncode": 0,
+      "runtime_milliseconds": 41.08546720817685,
+      "stderr": "",
+      "stdout": ""
+    },
+    {
+      "peak_memory_bytes": 3055616,
+      "repetition_index": 4,
+      "returncode": 0,
+      "runtime_milliseconds": 43.25874522328377,
+      "stderr": "",
+      "stdout": ""
+    },
+    {
+      "peak_memory_bytes": 2908160,
+      "repetition_index": 5,
+      "returncode": 0,
+      "runtime_milliseconds": 43.162043672055006,
+      "stderr": "",
+      "stdout": ""
+    },
+    {
+      "peak_memory_bytes": 2904064,
+      "repetition_index": 6,
+      "returncode": 0,
+      "runtime_milliseconds": 45.599253848195076,
+      "stderr": "",
+      "stdout": ""
+    },
+    {
+      "peak_memory_bytes": 2904064,
+      "repetition_index": 7,
+      "returncode": 0,
+      "runtime_milliseconds": 46.4163264259696,
+      "stderr": "",
+      "stdout": ""
+    },
+    {
+      "peak_memory_bytes": 2908160,
+      "repetition_index": 8,
+      "returncode": 0,
+      "runtime_milliseconds": 46.33622523397207,
+      "stderr": "",
+      "stdout": ""
+    },
+    {
+      "peak_memory_bytes": 2973696,
+      "repetition_index": 9,
+      "returncode": 0,
+      "runtime_milliseconds": 43.28137496486306,
+      "stderr": "",
+      "stdout": ""
+    },
+    {
+      "peak_memory_bytes": 2977792,
+      "repetition_index": 10,
+      "returncode": 0,
+      "runtime_milliseconds": 45.76632380485535,
+      "stderr": "",
+      "stdout": ""
+    }
+  ],
+  "source_path": "/home/min/a/peng397/multi-objective-statistical-analysis/generated_code/optimized/runtime/detailed/cpp/65.cpp",
+  "task_id": "65",
+  "test_error": false,
+  "timeout": false,
+  "variant": "after"
+}
