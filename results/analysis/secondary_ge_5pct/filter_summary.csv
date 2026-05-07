@@ -1,3 +1,0 @@
-response,min_improvement_ratio,input_rows,kept_rows,input_tasks,kept_tasks
-runtime_improvement_ratio,1.05,847,164,151,47
-memory_improvement_ratio,1.05,847,88,151,19

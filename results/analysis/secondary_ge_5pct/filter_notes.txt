@@ -1,1 +1,0 @@
-Secondary analysis keeps only correct complete cases with improvement_ratio >= 1.05 (at least 5% improvement over baseline for the modeled metric).

@@ -116,40 +116,11 @@ python3 scripts/analyze_results.py \
   --output-dir results/analysis
 ```
 
-## EffiBench Pipeline
-
-The EffiBench workflow uses `config_effibench.yaml` and writes its artifacts under `results/effibench/`, `prompts/effibench/`, and `generated_code/effibench/`.
-
-Before running it, point `dataset_path` in `config_effibench.yaml` at your local EffiBench checkout. The current workflow supports:
-
-- `language: python`
-- difficulty filtering through `selected_difficulty_levels`
-- the official EffiBench `mprof`-based evaluator
-
-Run the full EffiBench pipeline and then analyze it:
-
-```bash
-python3 scripts/run_effibench_pipeline.py --config config_effibench.yaml
-python3 scripts/analyze_results.py --config config_effibench.yaml
-```
-
-Run the official evaluator directly on an official-format results JSON:
-
-```bash
-python3 scripts/run_effibench_official.py \
-  --effibench-root /path/to/EffiBench \
-  --input-json /path/to/results/model.json \
-  --python-executable /path/to/python
-```
-
-The selected Python environment must have `memory_profiler` installed so `mprof` is available.
-
 ## Bundled Results Archive
 
-The repo root also includes `results.tar`, which packages the archived `results/` tree for both benchmark tracks:
+The repo root also includes `results.tar`, which packages the archived `results/` tree for the default benchmark track:
 
 - HumanEval: raw outputs, aggregated CSVs, and analysis artifacts
-- EffiBench: raw outputs, aggregated CSVs, and analysis artifacts for the 30 selected `Hard` problems in the checked-in configuration
 
 You can extract it with:
 
@@ -173,7 +144,6 @@ Main outputs for the default pipeline:
 - `results/raw_runs.csv`: raw benchmark measurements
 - `results/analysis_ready.csv`: analysis-ready summary table
 - `results/analysis/`: model summaries, ANOVA tables, plots, and correctness summaries
-- `results/analysis/secondary_ge_5pct/`: secondary filtered analysis for complete correct cases with metric-specific `improvement_ratio >= 1.05`
 
 ## Summary Table
 
